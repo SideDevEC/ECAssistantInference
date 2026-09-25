@@ -185,6 +185,10 @@ bool eci_token_is_eos(eci_context_t* ctx, int32_t token) {
 // Implements: temperature, top_k, top_p, min_p, repeat_penalty, presence penalty
 
 static bool g_rng_seeded = false;
+
+// Forward declarations (defined in the Grammar section below)
+struct eci_grammar_state_s;
+static void reset_grammar_state(eci_grammar_state_s* gs);
 static int32_t do_sample(llama_context* ctx, const llama_vocab* vocab,
                          const eci_sampling_params_t* params,
                          const std::vector<llama_token>& recent_tokens,
@@ -287,6 +291,7 @@ void eci_executor_free(eci_executor_t* exec) { delete exec; }
 
 eci_result_t eci_executor_prompt(eci_executor_t* exec, const char* text) {
     if (!exec || !text) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&exec->grammar_state);  // new prompt = new generation
     std::vector<llama_token> tokens;
     if (do_tokenize(exec->ctx_ref->vocab, text, tokens, false, true) < 0) return ECI_ERR_INTERNAL;
     exec->pending_tokens.insert(exec->pending_tokens.end(), tokens.begin(), tokens.end());
@@ -296,6 +301,9 @@ eci_result_t eci_executor_prompt(eci_executor_t* exec, const char* text) {
 
 eci_result_t eci_executor_prompt_tokens(eci_executor_t* exec, const int32_t* tokens, int count) {
     if (!exec || !tokens || count <= 0) return ECI_ERR_INVALID_ARG;
+    // NOTE: no grammar reset here — PromptTokens feeds sampled tokens back into
+    // the executor DURING generation; resetting would restart the grammar at
+    // position 0 every token. Text prompts (eci_executor_prompt) reset instead.
     exec->pending_tokens.insert(exec->pending_tokens.end(), tokens, tokens + count);
     exec->has_pending = true;
     return ECI_OK;
@@ -361,6 +369,7 @@ eci_result_t eci_executor_rewind(eci_executor_t* exec, int n_tokens) {
     if (n_tokens > exec->n_tokens) n_tokens = exec->n_tokens;
     if (n_tokens == 0) return ECI_OK;
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
+    reset_grammar_state(&exec->grammar_state);  // generation restarts after rewind
     int start = exec->n_tokens - n_tokens;
     llama_memory_seq_rm(exec->ctx_ref->mem, 0, start, -1);
     exec->n_tokens -= n_tokens;
@@ -376,6 +385,7 @@ eci_result_t eci_executor_rewind(eci_executor_t* exec, int n_tokens) {
 eci_result_t eci_executor_reset(eci_executor_t* exec) {
     if (!exec) return ECI_ERR_INVALID_ARG;
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
+    reset_grammar_state(&exec->grammar_state);
     llama_memory_seq_rm(exec->ctx_ref->mem, 0, 0, -1);
     exec->n_tokens = 0;
     exec->n_kv_pos = 0;
@@ -517,11 +527,12 @@ eci_result_t eci_conversation_sample(eci_conversation_t* conv,
                                      int32_t* out_token) {
     if (!conv || !out_token) return ECI_ERR_INVALID_ARG;
     if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_INVALID_ARG;
-    // Note: repeat penalty is NOT applied in batch mode (recent_tokens not tracked per conv).
-    // The C# layer must apply repeat penalty externally if needed, or use the executor path.
+    // Repeat/present penalties now apply in batch mode via conv->recent_tokens
+    // (mirrors the executor path).
     int32_t token = do_sample(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                              params, {}, conv->last_batch_idx);
+                              params, conv->recent_tokens, conv->last_batch_idx);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
+    conv->recent_tokens.push_back(token);
     *out_token = token;
     return ECI_OK;
 }
@@ -532,6 +543,11 @@ eci_result_t eci_conversation_rewind(eci_conversation_t* conv, int n_tokens) {
     if (!conv || n_tokens < 0) return ECI_ERR_INVALID_ARG;
     if (n_tokens > conv->n_tokens) n_tokens = conv->n_tokens;
     if (n_tokens == 0) return ECI_OK;
+    reset_grammar_state(&conv->grammar_state);  // generation restarts after rewind
+    if ((int)conv->recent_tokens.size() > n_tokens)
+        conv->recent_tokens.resize(conv->recent_tokens.size() - n_tokens);
+    else
+        conv->recent_tokens.clear();
     int start = conv->n_tokens - n_tokens;
     llama_memory_seq_rm(conv->mem, conv->seq_id, start, -1);
     conv->n_tokens -= n_tokens; conv->n_kv_pos -= n_tokens;
@@ -541,6 +557,8 @@ eci_result_t eci_conversation_rewind(eci_conversation_t* conv, int n_tokens) {
 
 eci_result_t eci_conversation_reset(eci_conversation_t* conv) {
     if (!conv) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&conv->grammar_state);
+    conv->recent_tokens.clear();
     if (conv->n_tokens > 0) llama_memory_seq_rm(conv->mem, conv->seq_id, 0, -1);
     conv->n_tokens = 0; conv->n_kv_pos = 0;
     conv->has_pending_prompt = false;
@@ -562,6 +580,7 @@ eci_result_t eci_conversation_restore(eci_pool_t* pool, eci_conversation_t* conv
                                        eci_state_t* state) {
     (void)pool;  // not needed — restore operates on conv directly
     if (!pool || !conv || !state) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&conv->grammar_state);  // generation rewind → fresh grammar
     int to_rewind = conv->n_tokens - state->n_tokens;
     if (to_rewind > 0) {
         llama_memory_seq_rm(conv->mem, conv->seq_id, state->n_tokens, -1);
@@ -635,6 +654,8 @@ eci_decode_result_t eci_infer(eci_context_t* ctx) {
         cp.conv->n_tokens += (int)cp.tokens.size();
         cp.conv->n_kv_pos += (int)cp.tokens.size();
         cp.conv->last_batch_idx = cp.first_idx + (int)cp.tokens.size() - 1;
+        cp.conv->recent_tokens.insert(cp.conv->recent_tokens.end(),
+                                      cp.tokens.begin(), cp.tokens.end());
         cp.conv->pending_tokens.clear();
         cp.conv->has_pending_prompt = false;
     }
@@ -878,6 +899,8 @@ eci_result_t eci_conversation_prompt_with_images(eci_conversation_t* conv,
                     return ECI_ERR_DECODE_FAILED;
                 }
                 conv->n_tokens += n_pending; conv->n_kv_pos += n_pending;
+                conv->recent_tokens.insert(conv->recent_tokens.end(),
+                                           conv->pending_tokens.begin(), conv->pending_tokens.end());
                 conv->pending_tokens.clear();
             }
 
@@ -933,6 +956,8 @@ eci_result_t eci_conversation_prompt_with_images(eci_conversation_t* conv,
                 }
 
                 conv->n_tokens += n_tokens; conv->n_kv_pos += n_tokens;
+                // Image chunk token positions are embeddings — no token ids exist,
+                // so they cannot contribute to repeat-penalty history.
                 conv->last_batch_idx = n_tokens - 1;
             }
         }
@@ -963,6 +988,8 @@ const char* eci_mtmd_marker_static(void) {
 // This implements sliding window context — when approaching n_ctx, drop the
 // oldest tokens instead of resetting the entire conversation.
 eci_result_t eci_conversation_shift_left(eci_conversation_t* conv, int n_tokens) {
+    if (!conv) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&conv->grammar_state);  // context shift → grammar desyncs
     if (!conv || n_tokens <= 0) return ECI_ERR_INVALID_ARG;
     if (n_tokens >= conv->n_tokens) {
         // Shifting everything = full clear
@@ -1005,7 +1032,11 @@ eci_result_t eci_conversation_shift_left(eci_conversation_t* conv, int n_tokens)
     // stored positions, not our counter.
 
     // Trim recent tokens for repeat penalty
-    // (not tracked in conversation, handled by executor — no-op here)
+    if ((int)conv->recent_tokens.size() > n_tokens)
+        conv->recent_tokens.erase(conv->recent_tokens.begin(),
+                                  conv->recent_tokens.begin() + n_tokens);
+    else
+        conv->recent_tokens.clear();
 
     if (conv->last_batch_idx >= conv->n_tokens) conv->last_batch_idx = -1;
     return ECI_OK;
@@ -1104,7 +1135,8 @@ eci_grammar_t* eci_grammar_create(eci_model_t* model, const char* grammar_str, c
     auto* test = llama_sampler_init_grammar(model->vocab, grammar_str, grammar_root);
     if (!test) return nullptr;
     llama_sampler_free(test);
-    // Store strings for per-sample recreation
+    // Store strings; the persistent sampler chain is built lazily per generation
+// by ensure_grammar_chain() and rebuilt when the grammar changes
     auto* g = new eci_grammar_s();
     g->vocab = model->vocab;
     g->grammar_str = grammar_str;
@@ -1117,35 +1149,36 @@ void eci_grammar_free(eci_grammar_t* grammar) {
     delete grammar;
 }
 
-// Helper: sample with optional grammar sampler chained
-// Get or create a persistent grammar sampler chain.
-// The chain is stored on the executor/conversation and survives across calls.
-// Prompt tokens are accepted into it on first use.
-static llama_sampler* get_or_init_grammar_chain(
-    llama_sampler** chain_ptr,
-    eci_grammar_t* grammar,
-    const std::vector<llama_token>& recent_tokens)
-{
-    if (!chain_ptr || !grammar) return nullptr;
-    if (*chain_ptr) return *chain_ptr;
+// Helper: reset grammar sampler state (new generation starts from position 0)
+static void reset_grammar_state(eci_grammar_state_s* gs) {
+    if (!gs) return;
+    if (gs->chain) { llama_sampler_free(gs->chain); gs->chain = nullptr; }
+    gs->grammar_str.clear();
+    gs->grammar_root.clear();
+}
 
-    // Create grammar-only chain (grammar must be first and only sampler)
-    llama_sampler* chain = llama_sampler_chain_init(llama_sampler_chain_default_params());
-    llama_sampler* gs = llama_sampler_init_grammar(
-        grammar->vocab, grammar->grammar_str.c_str(), grammar->grammar_root.c_str());
-    if (!gs) {
-        llama_sampler_free(chain);
-        return nullptr;
+// Ensure the persistent grammar sampler chain matches the requested grammar.
+// Rebuilds when the grammar string/root changed (new request → fresh state).
+static bool ensure_grammar_chain(eci_grammar_state_s* gs, eci_grammar_t* grammar) {
+    if (!gs || !grammar) return false;
+    if (gs->chain && (gs->grammar_str != grammar->grammar_str ||
+                      gs->grammar_root != grammar->grammar_root)) {
+        reset_grammar_state(gs);
     }
-    llama_sampler_chain_add(chain, gs);
-
-    // Accept prompt tokens to initialize grammar state
-    for (const auto& tok : recent_tokens) {
-        try { llama_sampler_accept(chain, tok); } catch (...) { break; }
+    if (!gs->chain) {
+        llama_sampler* chain = llama_sampler_chain_init(llama_sampler_chain_default_params());
+        llama_sampler* gsampler = llama_sampler_init_grammar(
+            grammar->vocab, grammar->grammar_str.c_str(), grammar->grammar_root.c_str());
+        if (!gsampler) {
+            llama_sampler_free(chain);
+            return false;
+        }
+        llama_sampler_chain_add(chain, gsampler);
+        gs->chain = chain;
+        gs->grammar_str = grammar->grammar_str;
+        gs->grammar_root = grammar->grammar_root;
     }
-
-    *chain_ptr = chain;
-    return chain;
+    return true;
 }
 
 static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* vocab,
@@ -1153,12 +1186,16 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
                                        const std::vector<llama_token>& recent_tokens,
                                        int last_batch_idx,
                                        eci_grammar_t* grammar,
-                                       llama_sampler** grammar_chain_ptr) {
+                                       eci_grammar_state_s* grammar_state) {
     if (!params || last_batch_idx < 0) return -1;
+    if (grammar && !ensure_grammar_chain(grammar_state, grammar)) return -1;
 
     int n_vocab = llama_vocab_n_tokens(vocab);
 
-    // Build the sampler chain — each call creates fresh samplers
+    // Per-call SELECTION chain — grammar is NOT in it. The grammar lives in the
+    // persistent chain and is applied FIRST on the full vocab (masking invalid
+    // tokens to -inf) before temperature/truncation, mirroring llama.cpp's
+    // common sampler chain order (grammar first, like llama-server).
     llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
     // Penalties (repeat + present)
@@ -1168,17 +1205,6 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
             llama_sampler_chain_add(smpl, llama_sampler_init_penalties(
                 n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present));
         }
-    }
-
-    // Grammar — eager sampler. The accept() call may throw on
-    // multi-character tokens (upstream llama.cpp bug), but we catch
-    // it and continue. Eager is required so the grammar constrains
-    // from the FIRST token (lazy would let the model produce non-JSON
-    // before the trigger activates).
-    if (grammar) {
-        llama_sampler* gs = llama_sampler_init_grammar(
-            grammar->vocab, grammar->grammar_str.c_str(), grammar->grammar_root.c_str());
-        if (gs) llama_sampler_chain_add(smpl, gs);
     }
 
     // Temperature / selection
@@ -1196,18 +1222,35 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
         llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)rand()));
     }
 
-    // Sample: -1 = last token's logits
-    // Grammar sampling can throw during accept on multi-character tokens
-    // (upstream llama.cpp bug). We catch the accept exception and continue
-    // — the grammar state may be slightly wrong but the next sample is
-    // still grammar-constrained. This is better than falling back to
-    // unconstrained sampling.
-    llama_token token = llama_sampler_sample(smpl, ctx, -1);
-    if (params->ignore_eos && llama_vocab_is_eog(vocab, token)) {
-        try { llama_sampler_accept(smpl, token); } catch (...) {}
-        token = llama_sampler_sample(smpl, ctx, -1);
+    float* logits = llama_get_logits_ith(ctx, last_batch_idx);
+    if (!logits) { llama_sampler_free(smpl); return -1; }
+
+    // Draw loop: rebuild candidate array from raw logits each attempt so the
+    // ignore_eos re-draw starts from unmodified logits (sampler apply mutates
+    // the token data array, not the context logits buffer).
+    llama_token token = -1;
+    for (int attempt = 0; attempt < 16; attempt++) {
+        std::vector<llama_token_data> cur;
+        cur.reserve(n_vocab);
+        for (int i = 0; i < n_vocab; i++) cur.push_back({i, logits[i], 0.0f});
+        llama_token_data_array arr = { cur.data(), (size_t)n_vocab, -1, false };
+
+        // Grammar masks FIRST (persistent chain — state advances via accept())
+        if (grammar) llama_sampler_apply(grammar_state->chain, &arr);
+        llama_sampler_apply(smpl, &arr);
+        token = arr.data[arr.selected].id;
+
+        // ignore_eos: re-draw WITHOUT accepting EOG into the grammar — feeding
+        // end/control tokens into a JSON grammar kills all parse stacks.
+        if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
     }
-    try { llama_sampler_accept(smpl, token); } catch (...) {}
+
+    // Advance grammar state with the committed token. Skip EOG/control tokens
+    // (chat-template control tokens would desync the parse state).
+    if (grammar && !llama_vocab_is_eog(vocab, token) && !llama_vocab_is_control(vocab, token)) {
+        llama_sampler_accept(grammar_state->chain, token);
+    }
+
     llama_sampler_free(smpl);
     return token;
 }
@@ -1220,9 +1263,25 @@ eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_samplin
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
     int32_t token = do_sample_with_grammar(exec->ctx_ref->ctx, exec->ctx_ref->vocab,
                                             params, exec->recent_tokens, exec->last_batch_idx, grammar,
-                                            &exec->grammar_chain);
+                                            &exec->grammar_state);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
+    return ECI_OK;
+}
+
+// Explicit generation-boundary reset: the caller (C# BatchSession) invokes this
+// once per generation BEFORE the sample loop. The conversation re-prompts each
+// generated piece as text, so prompt hooks cannot distinguish new turns from
+// per-token pieces.
+eci_result_t eci_conversation_grammar_reset(eci_conversation_t* conv) {
+    if (!conv) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&conv->grammar_state);
+    return ECI_OK;
+}
+
+eci_result_t eci_executor_grammar_reset(eci_executor_t* exec) {
+    if (!exec) return ECI_ERR_INVALID_ARG;
+    reset_grammar_state(&exec->grammar_state);
     return ECI_OK;
 }
 
@@ -1232,9 +1291,10 @@ eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci
     if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
 
     int32_t token = do_sample_with_grammar(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                                            params, {}, conv->last_batch_idx, grammar,
-                                            &conv->grammar_chain);
+                                            params, conv->recent_tokens, conv->last_batch_idx, grammar,
+                                            &conv->grammar_state);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
+    conv->recent_tokens.push_back(token);
     *out_token = token;
     return ECI_OK;
 }

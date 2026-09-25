@@ -192,6 +192,8 @@ eci_result_t eci_conversation_sample(eci_conversation_t* conv,
 int eci_conversation_token_count(eci_conversation_t* conv);
 eci_result_t eci_conversation_rewind(eci_conversation_t* conv, int n_tokens);
 eci_result_t eci_conversation_reset(eci_conversation_t* conv);
+eci_result_t eci_conversation_grammar_reset(eci_conversation_t* conv);
+eci_result_t eci_executor_grammar_reset(eci_executor_t* exec);
 
 /* Save/restore conversation state (for batch rewind) */
 eci_result_t eci_conversation_save(eci_conversation_t* conv, eci_state_t** out_state);

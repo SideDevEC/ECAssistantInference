@@ -162,6 +162,9 @@ internal static class EciNative
     [DllImport(Lib, EntryPoint = "eci_conversation_reset", CallingConvention = CallingConvention.Cdecl)]
     public static extern EciResult ConversationReset(IntPtr conversation);
 
+    [DllImport(Lib, EntryPoint = "eci_conversation_grammar_reset", CallingConvention = CallingConvention.Cdecl)]
+    public static extern EciResult ConversationGrammarReset(IntPtr conversation);
+
     [DllImport(Lib, EntryPoint = "eci_conversation_save", CallingConvention = CallingConvention.Cdecl)]
     public static extern EciResult ConversationSave(IntPtr conversation, out IntPtr state);
 

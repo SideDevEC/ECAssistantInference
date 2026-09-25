@@ -45,6 +45,17 @@ struct eci_context_s {
     std::mutex infer_mtx;
 };
 
+// Per-executor/conversation grammar sampler holder. The chain MUST persist
+// across sample calls within one generation (grammar is stateful — restarting
+// from a fresh sampler per call makes the grammar expect position 0 forever).
+// Rebuilt automatically when a different grammar string/root is passed.
+struct eci_grammar_state_s {
+    llama_sampler* chain = nullptr;
+    std::string grammar_str;
+    std::string grammar_root;
+    ~eci_grammar_state_s() { if (chain) llama_sampler_free(chain); }
+};
+
 struct eci_conversation_s {
     llama_seq_id seq_id;
     llama_context* ctx;
@@ -55,9 +66,13 @@ struct eci_conversation_s {
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
 
-    // Persistent grammar sampler chain
-    llama_sampler* grammar_chain = nullptr;
-    bool grammar_initialized = false;
+    // Rolling window of committed tokens for repeat/present penalties
+    // (mirrors eci_executor_s.recent_tokens)
+    std::vector<llama_token> recent_tokens;
+
+    // Persistent grammar sampler state (survives across sample calls within
+    // one generation; rebuilt when a different grammar is passed)
+    eci_grammar_state_s grammar_state;
 };
 
 struct eci_pool_s {
@@ -75,7 +90,7 @@ struct eci_executor_s {
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
     std::vector<llama_token> recent_tokens;
-    llama_sampler* grammar_chain = nullptr;
+    eci_grammar_state_s grammar_state;
 };
 
 struct eci_state_s {

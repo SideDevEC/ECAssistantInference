@@ -73,6 +73,12 @@ public sealed class NativeConversation : IConversation
         EciNative.ConversationReset(_handle).ThrowIfError();
     }
 
+    public void ResetGrammarState()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        EciNative.ConversationGrammarReset(_handle).ThrowIfError();
+    }
+
     public void ShiftLeft(int tokenCount)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
