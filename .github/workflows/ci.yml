@@ -33,12 +33,12 @@ jobs:
           curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
           # Small LLM for inference tests (~400MB)
-          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
-            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
 
       - name: Tests (basic)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-metal
@@ -46,7 +46,7 @@ jobs:
 
       - name: Tests (stress)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-metal
@@ -81,12 +81,12 @@ jobs:
           mkdir -p models
           curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
-            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
 
       - name: Tests (basic)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
@@ -94,7 +94,7 @@ jobs:
 
       - name: Tests (stress)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
@@ -127,12 +127,12 @@ jobs:
           mkdir -p models
           curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf `
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf `
-            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf `
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
 
       - name: Tests (basic)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
@@ -141,7 +141,7 @@ jobs:
 
       - name: Tests (stress)
         env:
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
@@ -179,8 +179,8 @@ jobs:
           mkdir -p models
           curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
-            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
 
       - name: Build C#
         run: |
@@ -191,7 +191,7 @@ jobs:
       - name: Test C#
         env:
           DYLD_LIBRARY_PATH: native-lib
-          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_MODEL_PATH: models/SmolLM2-135M-Q4_K_M.gguf
           ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd csharp
