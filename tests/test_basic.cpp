@@ -21,10 +21,7 @@ static int tests_run = 0, tests_passed = 0, tests_skipped = 0;
     tests_passed++; \
     fprintf(stderr, "OK\n");
 
-#define SKIP(msg) \
-    tests_skipped++; \
-    fprintf(stderr, "SKIP (%s)\n", msg); \
-    return;
+#define SKIP(msg) do { tests_skipped++; fprintf(stderr, "SKIP (%s)\n", msg); return; } while(0)
 
 #define ASSERT(cond) \
     if (!(cond)) { \

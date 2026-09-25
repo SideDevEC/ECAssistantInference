@@ -31,10 +31,7 @@ static int tests_run = 0, tests_passed = 0, tests_skipped = 0;
         exit(1); \
     }
 
-#define SKIP(msg) \
-    tests_skipped++; \
-    fprintf(stderr, "SKIP (%s)\n", msg); \
-    return;
+#define SKIP(msg) do { tests_skipped++; fprintf(stderr, "SKIP (%s)\n", msg); return; } while(0)
 
 static bool file_exists(const char* path) {
     if (!path) return false;
