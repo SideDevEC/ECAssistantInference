@@ -9,6 +9,15 @@
 #include "eci_internal.h"
 #include <cmath>
 #include <cstring>
+#include <cstdarg>
+#include <cstdio>
+
+// ── Logging globals (2026-09-25) — defined here so ECI_LOG macro works everywhere ──
+static eci_log_callback_t g_log_cb = nullptr;
+static eci_log_level_t g_log_min_level = ECI_LOG_NONE;
+
+// Forward declaration of the log implementation (defined at end of file).
+extern "C" void eci_log(eci_log_level_t level, const char* tag, const char* fmt, ...);
 
 // ── Helpers ──
 
@@ -23,6 +32,7 @@ const char* eci_result_str(eci_result_t r) {
 }
 
 static void set_error(eci_context_t* ctx, const std::string& msg) {
+    ECI_LOG(ECI_LOG_ERROR, "Inference", "set_error: %s", msg.c_str());
     if (ctx) ctx->last_error = msg;
 }
 
@@ -38,6 +48,7 @@ eci_result_t eci_load_model(const eci_model_params_t* params, eci_model_t** out_
     m->model = llama_model_load_from_file(params->model_path, mp);
     if (!m->model) {
         m->last_error = std::string("Failed to load model: ") + params->model_path;
+    ECI_LOG(ECI_LOG_INFO, "Model", "Loaded: %s (gpu_layers=%d)", params->model_path, params->gpu_layers);
         delete m;
         return ECI_ERR_LOAD_FAILED;
     }
@@ -352,6 +363,7 @@ eci_decode_result_t eci_executor_infer(eci_executor_t* exec) {
             exec->pending_tokens.erase(exec->pending_tokens.begin(),
                                        exec->pending_tokens.begin() + decoded);
             exec->ctx_ref->last_error = "llama_decode failed (rc=" + std::to_string(rc) + ")";
+            ECI_LOG(ECI_LOG_ERROR, "Decode", "llama_decode failed rc=%d, slice=%d of %d tokens", rc, slice, exec->n_tokens);
             return ECI_DECODE_FAILED;
         }
 
@@ -683,6 +695,7 @@ eci_decode_result_t eci_infer(eci_context_t* ctx) {
 
         if (rc != 0) {
             ctx->last_error = "llama_decode failed (rc=" + std::to_string(rc) + ")";
+            ECI_LOG(ECI_LOG_ERROR, "Batch", "llama_decode failed rc=%d", rc);
             // Successfully decoded earlier slices are already committed. Trim the
             // committed prefix from each conv's pending_tokens so a retry does not
             // re-decode them (positions would then diverge from KV).
@@ -1519,4 +1532,23 @@ eci_result_t eci_executor_prompt_with_images(eci_executor_t* exec,
 
 const char* eci_last_error(eci_context_t* ctx) {
     return ctx ? ctx->last_error.c_str() : "";
+}
+
+// ── Structured logging implementation (2026-09-25) ──
+extern "C" void eci_set_log_callback(eci_log_callback_t cb) {
+    g_log_cb = cb;
+}
+
+extern "C" void eci_set_log_level(eci_log_level_t level) {
+    g_log_min_level = level;
+}
+
+extern "C" void eci_log(eci_log_level_t level, const char* tag, const char* fmt, ...) {
+    if (!g_log_cb || level < g_log_min_level) return;
+    char buf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+    g_log_cb((int)level, tag, buf);
 }

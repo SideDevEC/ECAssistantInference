@@ -24,6 +24,20 @@ internal static class EciNative
     [DllImport(Lib, EntryPoint = "eci_last_error", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr LastError(IntPtr context);
 
+    // ── Structured logging (2026-09-25) ──
+    // Zero-overhead when no callback is set. The C# layer registers a delegate
+    // that forwards to the LLM ServerLogger.
+
+    [DllImport(Lib, EntryPoint = "eci_set_log_callback", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetLogCallback(LogDelegate cb);
+
+    [DllImport(Lib, EntryPoint = "eci_set_log_level", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetLogLevel(int level);
+
+    /// <summary>Native log callback delegate. Must be kept alive by the caller.</summary>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void LogDelegate(int level, IntPtr tag, IntPtr message);
+
     // ── Model ──
 
     [DllImport(Lib, EntryPoint = "eci_load_model", CallingConvention = CallingConvention.Cdecl)]

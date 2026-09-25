@@ -350,6 +350,44 @@ eci_result_t eci_executor_prompt_with_images(eci_executor_t* exec,
 const char* eci_last_error(eci_context_t* ctx);
 const char* eci_result_str(eci_result_t r);
 
+/* ── Structured logging callback (2026-09-25) ──
+ *
+ * Zero-overhead when no callback is set: every log site is a single
+ * `if (g_log_cb)` check — branch-predicted to skip. When the callback
+ * is NULL (default), no string formatting, no argument marshalling.
+ *
+ * Levels: DEBUG < INFO < WARN < ERROR. Set the minimum level via
+ * eci_set_log_level. Messages below the minimum are not dispatched.
+ * The callback receives: level (int), a tag string (static), and the
+ * formatted message. The callback owns the received strings for the
+ * duration of the call only — copy if needed.
+ */
+typedef enum {
+    ECI_LOG_DEBUG = 0,
+    ECI_LOG_INFO  = 1,
+    ECI_LOG_WARN  = 2,
+    ECI_LOG_ERROR = 3,
+    ECI_LOG_NONE  = 99
+} eci_log_level_t;
+
+typedef void (*eci_log_callback_t)(int level, const char* tag, const char* message);
+
+/* Set the global log callback. Pass NULL to disable (zero-overhead). */
+void eci_set_log_callback(eci_log_callback_t cb);
+
+/* Set the minimum log level. Messages below this level are not dispatched. */
+void eci_set_log_level(eci_log_level_t level);
+
+/* Internal log helper — not for direct use by callers; use ECI_LOG macro. */
+void eci_log(eci_log_level_t level, const char* tag, const char* fmt, ...);
+
+/* Convenience macro: evaluates g_log_cb first (zero-cost skip). */
+#define ECI_LOG(lvl, tag, ...) do { \
+    if (g_log_cb && (lvl) >= g_log_min_level) { \
+        eci_log((lvl), (tag), __VA_ARGS__); \
+    } \
+} while(0)
+
 /* ════════════════════════════════════════════════════
  *  Backend safety layer
  * ════════════════════════════════════════════════════ */

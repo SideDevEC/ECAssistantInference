@@ -1,0 +1,1004 @@
+[
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -o CMakeFiles/ggml-base.dir/ggml.c.o -c /llama.cpp/ggml/src/ggml.c",
+  "file": "/llama.cpp/ggml/src/ggml.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/ggml.cpp.o -c /llama.cpp/ggml/src/ggml.cpp",
+  "file": "/llama.cpp/ggml/src/ggml.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -o CMakeFiles/ggml-base.dir/ggml-alloc.c.o -c /llama.cpp/ggml/src/ggml-alloc.c",
+  "file": "/llama.cpp/ggml/src/ggml-alloc.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-alloc.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/ggml-backend.cpp.o -c /llama.cpp/ggml/src/ggml-backend.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-backend.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-backend.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/ggml-backend-meta.cpp.o -c /llama.cpp/ggml/src/ggml-backend-meta.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-backend-meta.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-backend-meta.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/ggml-opt.cpp.o -c /llama.cpp/ggml/src/ggml-opt.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-opt.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-opt.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/ggml-threading.cpp.o -c /llama.cpp/ggml/src/ggml-threading.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-threading.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-threading.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -o CMakeFiles/ggml-base.dir/ggml-quants.c.o -c /llama.cpp/ggml/src/ggml-quants.c",
+  "file": "/llama.cpp/ggml/src/ggml-quants.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/ggml-quants.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/. -I/build/llama.cpp/ggml/src -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-base.dir/gguf.cpp.o -c /llama.cpp/ggml/src/gguf.cpp",
+  "file": "/llama.cpp/ggml/src/gguf.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-base.dir/gguf.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.c.o -c /llama.cpp/ggml/src/ggml-cpu/ggml-cpu.c",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/ggml-cpu.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/ggml-cpu.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/ggml-cpu.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ggml-cpu.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/repack.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/repack.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/repack.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/repack.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/iqp.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/iqp.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/iqp.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/iqp.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/hbm.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/hbm.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/hbm.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/hbm.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/quants.c.o -c /llama.cpp/ggml/src/ggml-cpu/quants.c",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/quants.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/quants.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/traits.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/traits.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/traits.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/traits.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/amx.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/amx/amx.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/amx/amx.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/amx.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/mmq.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/amx/mmq.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/amx/mmq.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/amx/mmq.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/binary-ops.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/binary-ops.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/binary-ops.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/binary-ops.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/unary-ops.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/unary-ops.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/unary-ops.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/unary-ops.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/vec.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/vec.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/vec.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/vec.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/ops.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/ops.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/ops.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/ops.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/llamafile/sgemm.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/llamafile/sgemm.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/llamafile/sgemm.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/llamafile/sgemm.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/cc -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/quants.c.o -c /llama.cpp/ggml/src/ggml-cpu/arch/arm/quants.c",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/arch/arm/quants.c",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/quants.c.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_ACCELERATE -DGGML_USE_CPU_REPACK -DGGML_USE_LLAMAFILE -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/.. -I/llama.cpp/ggml/src/. -I/llama.cpp/ggml/src/ggml-cpu -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -U__ARM_FEATURE_SVE -U__ARM_FEATURE_SME -mcpu=native+dotprod+i8mm+nosve+nosme -o CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/repack.cpp.o -c /llama.cpp/ggml/src/ggml-cpu/arch/arm/repack.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-cpu/arch/arm/repack.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml-cpu.dir/ggml-cpu/arch/arm/repack.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml.dir/ggml-backend-dl.cpp.o -c /llama.cpp/ggml/src/ggml-backend-dl.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-backend-dl.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml.dir/ggml-backend-dl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src",
+  "command": "/usr/bin/c++ -DGGML_SCHED_MAX_COPIES=4 -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml.dir/ggml-backend-reg.cpp.o -c /llama.cpp/ggml/src/ggml-backend-reg.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-backend-reg.cpp",
+  "output": "llama.cpp/ggml/src/CMakeFiles/ggml.dir/ggml-backend-reg.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-blas",
+  "command": "/usr/bin/c++ -DACCELERATE_LAPACK_ILP64 -DACCELERATE_NEW_LAPACK -DGGML_BLAS_USE_ACCELERATE -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-blas/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-blas.dir/ggml-blas.cpp.o -c /llama.cpp/ggml/src/ggml-blas/ggml-blas.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-blas/ggml-blas.cpp",
+  "output": "llama.cpp/ggml/src/ggml-blas/CMakeFiles/ggml-blas.dir/ggml-blas.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -o CMakeFiles/ggml-metal.dir/ggml-metal-device.m.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-device.m",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-device.m",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-device.m.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal-device.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-device.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-device.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-device.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal-common.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-common.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-common.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-common.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu11 -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -o CMakeFiles/ggml-metal.dir/ggml-metal-context.m.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-context.m",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-context.m",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-context.m.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal-fusion.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-fusion.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-fusion.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-fusion.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal-ops.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-ops.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-ops.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-ops.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/c++ -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/ggml-metal.dir/ggml-metal-tuning.cpp.o -c /llama.cpp/ggml/src/ggml-metal/ggml-metal-tuning.cpp",
+  "file": "/llama.cpp/ggml/src/ggml-metal/ggml-metal-tuning.cpp",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/ggml-metal-tuning.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_aux.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_aux.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_aux.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_aux.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_f16.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_f16.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_f16.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_f16.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_f32.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_f32.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_f32.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_f32.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q4_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q4_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q4_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q4_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q4_1.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q4_1.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q4_1.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q4_1.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q5_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q5_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q5_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q5_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q5_1.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q5_1.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q5_1.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q5_1.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q8_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q8_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_q8_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_q8_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_f16.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_f16.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_f16.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_f16.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_f32.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_f32.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_f32.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_f32.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q4_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q4_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q4_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q4_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q4_1.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q4_1.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q4_1.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q4_1.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q5_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q5_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q5_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q5_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q5_1.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q5_1.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q5_1.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q5_1.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q8_0.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q8_0.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-fa_vec_q8_0.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-fa_vec_q8_0.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mv.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-mul_mv.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-mul_mv.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mv.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mm.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-mul_mm.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-mul_mm.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-mul_mm.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-quantize.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-quantize.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-quantize.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-quantize.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-softmax.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-softmax.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-softmax.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-softmax.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-norm.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-norm.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-norm.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-norm.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-unary.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-unary.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-unary.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-unary.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-binbcast.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-binbcast.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-binbcast.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-binbcast.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-reduce.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-reduce.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-reduce.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-reduce.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-tri.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-tri.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-tri.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-tri.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-ssm.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-ssm.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-ssm.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-ssm.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-wkv.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-wkv.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-wkv.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-wkv.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-gated_delta_net.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-gated_delta_net.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-gated_delta_net.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-gated_delta_net.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-solve_tri.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-solve_tri.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-solve_tri.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-solve_tri.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-rope.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-rope.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-rope.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-rope.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-conv.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-conv.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-conv.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-conv.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-upscale.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-upscale.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-upscale.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-upscale.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-argsort.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-argsort.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-argsort.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-argsort.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-pool.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-pool.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-pool.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-pool.s.o"
+},
+{
+  "directory": "/build/llama.cpp/ggml/src/ggml-metal",
+  "command": "/usr/bin/cc -DGGML_METAL_EMBED_LIBRARY -DGGML_SCHED_MAX_COPIES=4 -D_DARWIN_C_SOURCE -D_XOPEN_SOURCE=600 -I/llama.cpp/ggml/src/ggml-metal/.. -I/llama.cpp/ggml/src/../include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Metal.framework -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/MetalKit.framework -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -fPIC -o CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-misc.s.o -c /build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-misc.s",
+  "file": "/build/llama.cpp/ggml/src/ggml-metal/autogenerated/ggml-metal-embed-misc.s",
+  "output": "llama.cpp/ggml/src/ggml-metal/CMakeFiles/ggml-metal.dir/autogenerated/ggml-metal-embed-misc.s.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_9_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_9_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_9_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_9_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_8_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_8_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_8_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_8_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_7_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_7_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_7_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_7_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_6_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_6_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_6_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_6_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_5_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_5_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_5_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_5_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_4_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_4_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_4_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_4_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_3_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_3_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_3_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_3_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_2_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_2_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_2_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_2_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_1_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/Unity/unity_0_cxx.cxx.o -c /build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_0_cxx.cxx",
+  "file": "/build/llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_0_cxx.cxx",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/Unity/unity_0_cxx.cxx.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama.cpp.o -c /llama.cpp/src/llama.cpp",
+  "file": "/llama.cpp/src/llama.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-adapter.cpp.o -c /llama.cpp/src/llama-adapter.cpp",
+  "file": "/llama.cpp/src/llama-adapter.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-adapter.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-arch.cpp.o -c /llama.cpp/src/llama-arch.cpp",
+  "file": "/llama.cpp/src/llama-arch.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-arch.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-batch.cpp.o -c /llama.cpp/src/llama-batch.cpp",
+  "file": "/llama.cpp/src/llama-batch.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-batch.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-chat.cpp.o -c /llama.cpp/src/llama-chat.cpp",
+  "file": "/llama.cpp/src/llama-chat.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-chat.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-context.cpp.o -c /llama.cpp/src/llama-context.cpp",
+  "file": "/llama.cpp/src/llama-context.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-context.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-cparams.cpp.o -c /llama.cpp/src/llama-cparams.cpp",
+  "file": "/llama.cpp/src/llama-cparams.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-cparams.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-grammar.cpp.o -c /llama.cpp/src/llama-grammar.cpp",
+  "file": "/llama.cpp/src/llama-grammar.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-grammar.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-graph.cpp.o -c /llama.cpp/src/llama-graph.cpp",
+  "file": "/llama.cpp/src/llama-graph.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-graph.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-hparams.cpp.o -c /llama.cpp/src/llama-hparams.cpp",
+  "file": "/llama.cpp/src/llama-hparams.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-hparams.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-impl.cpp.o -c /llama.cpp/src/llama-impl.cpp",
+  "file": "/llama.cpp/src/llama-impl.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-impl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-io.cpp.o -c /llama.cpp/src/llama-io.cpp",
+  "file": "/llama.cpp/src/llama-io.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-io.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache.cpp.o -c /llama.cpp/src/llama-kv-cache.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache-iswa.cpp.o -c /llama.cpp/src/llama-kv-cache-iswa.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache-iswa.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache-iswa.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache-dsa.cpp.o -c /llama.cpp/src/llama-kv-cache-dsa.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache-dsa.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache-dsa.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache-dsa-iswa.cpp.o -c /llama.cpp/src/llama-kv-cache-dsa-iswa.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache-dsa-iswa.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache-dsa-iswa.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache-msa.cpp.o -c /llama.cpp/src/llama-kv-cache-msa.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache-msa.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache-msa.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-kv-cache-dsv4.cpp.o -c /llama.cpp/src/llama-kv-cache-dsv4.cpp",
+  "file": "/llama.cpp/src/llama-kv-cache-dsv4.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-kv-cache-dsv4.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-memory.cpp.o -c /llama.cpp/src/llama-memory.cpp",
+  "file": "/llama.cpp/src/llama-memory.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-memory.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-memory-hybrid.cpp.o -c /llama.cpp/src/llama-memory-hybrid.cpp",
+  "file": "/llama.cpp/src/llama-memory-hybrid.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-memory-hybrid.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-memory-hybrid-iswa.cpp.o -c /llama.cpp/src/llama-memory-hybrid-iswa.cpp",
+  "file": "/llama.cpp/src/llama-memory-hybrid-iswa.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-memory-hybrid-iswa.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-memory-hybrid-idx.cpp.o -c /llama.cpp/src/llama-memory-hybrid-idx.cpp",
+  "file": "/llama.cpp/src/llama-memory-hybrid-idx.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-memory-hybrid-idx.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-memory-recurrent.cpp.o -c /llama.cpp/src/llama-memory-recurrent.cpp",
+  "file": "/llama.cpp/src/llama-memory-recurrent.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-memory-recurrent.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-mmap.cpp.o -c /llama.cpp/src/llama-mmap.cpp",
+  "file": "/llama.cpp/src/llama-mmap.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-mmap.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-model-loader.cpp.o -c /llama.cpp/src/llama-model-loader.cpp",
+  "file": "/llama.cpp/src/llama-model-loader.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-model-loader.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-model-saver.cpp.o -c /llama.cpp/src/llama-model-saver.cpp",
+  "file": "/llama.cpp/src/llama-model-saver.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-model-saver.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-model.cpp.o -c /llama.cpp/src/llama-model.cpp",
+  "file": "/llama.cpp/src/llama-model.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-model.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-quant.cpp.o -c /llama.cpp/src/llama-quant.cpp",
+  "file": "/llama.cpp/src/llama-quant.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-quant.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-sampler.cpp.o -c /llama.cpp/src/llama-sampler.cpp",
+  "file": "/llama.cpp/src/llama-sampler.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-sampler.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/llama-vocab.cpp.o -c /llama.cpp/src/llama-vocab.cpp",
+  "file": "/llama.cpp/src/llama-vocab.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/llama-vocab.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/unicode-data.cpp.o -c /llama.cpp/src/unicode-data.cpp",
+  "file": "/llama.cpp/src/unicode-data.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/unicode-data.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/src",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -I/llama.cpp/src/. -I/build/llama.cpp/src -I/llama.cpp/src/../include -I/llama.cpp/ggml/src/../include -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/llama.dir/unicode.cpp.o -c /llama.cpp/src/unicode.cpp",
+  "file": "/llama.cpp/src/unicode.cpp",
+  "output": "llama.cpp/src/CMakeFiles/llama.dir/unicode.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/vendor/hash",
+  "command": "/usr/bin/c++  -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/hash/. -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -o CMakeFiles/vendor-hash.dir/hash.cpp.o -c /llama.cpp/vendor/hash/hash.cpp",
+  "file": "/llama.cpp/vendor/hash/hash.cpp",
+  "output": "llama.cpp/vendor/hash/CMakeFiles/vendor-hash.dir/hash.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/vendor/hash",
+  "command": "/usr/bin/cc  -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/hash/. -g -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -w -o CMakeFiles/vendor-hash.dir/xxhash/xxhash.c.o -c /llama.cpp/vendor/hash/xxhash/xxhash.c",
+  "file": "/llama.cpp/vendor/hash/xxhash/xxhash.c",
+  "output": "llama.cpp/vendor/hash/CMakeFiles/vendor-hash.dir/xxhash/xxhash.c.o"
+},
+{
+  "directory": "/build/llama.cpp/vendor/hash",
+  "command": "/usr/bin/c++  -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/hash/. -x c++ -g -std=gnu++17 -arch arm64 -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wmissing-prototypes -Wextra-semi -w -o CMakeFiles/vendor-hash.dir/sha1/sha1.c.o -c /llama.cpp/vendor/hash/sha1/sha1.c",
+  "file": "/llama.cpp/vendor/hash/sha1/sha1.c",
+  "output": "llama.cpp/vendor/hash/CMakeFiles/vendor-hash.dir/sha1/sha1.c.o"
+},
+{
+  "directory": "/build/llama.cpp/vendor/hash",
+  "command": "/usr/bin/cc  -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/hash/. -g -arch arm64 -fPIC -Wshadow -Wstrict-prototypes -Wpointer-arith -Wmissing-prototypes -Werror=implicit-int -Werror=implicit-function-declaration -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -Wunreachable-code-break -Wunreachable-code-return -Wdouble-promotion -w -o CMakeFiles/vendor-hash.dir/sha256/sha256.c.o -c /llama.cpp/vendor/hash/sha256/sha256.c",
+  "file": "/llama.cpp/vendor/hash/sha256/sha256.c",
+  "output": "llama.cpp/vendor/hash/CMakeFiles/vendor-hash.dir/sha256/sha256.c.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/mtmd.cpp.o -c /llama.cpp/tools/mtmd/mtmd.cpp",
+  "file": "/llama.cpp/tools/mtmd/mtmd.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/mtmd.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/mtmd-audio.cpp.o -c /llama.cpp/tools/mtmd/mtmd-audio.cpp",
+  "file": "/llama.cpp/tools/mtmd/mtmd-audio.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/mtmd-audio.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/mtmd-image.cpp.o -c /llama.cpp/tools/mtmd/mtmd-image.cpp",
+  "file": "/llama.cpp/tools/mtmd/mtmd-image.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/mtmd-image.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/mtmd-helper.cpp.o -c /llama.cpp/tools/mtmd/mtmd-helper.cpp",
+  "file": "/llama.cpp/tools/mtmd/mtmd-helper.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/mtmd-helper.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/mtmd-helper-gen.cpp.o -c /llama.cpp/tools/mtmd/mtmd-helper-gen.cpp",
+  "file": "/llama.cpp/tools/mtmd/mtmd-helper-gen.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/mtmd-helper-gen.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/clip.cpp.o -c /llama.cpp/tools/mtmd/clip.cpp",
+  "file": "/llama.cpp/tools/mtmd/clip.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/clip.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/cogvlm.cpp.o -c /llama.cpp/tools/mtmd/models/cogvlm.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/cogvlm.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/cogvlm.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/conformer.cpp.o -c /llama.cpp/tools/mtmd/models/conformer.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/conformer.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/conformer.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/deepseek4v.cpp.o -c /llama.cpp/tools/mtmd/models/deepseek4v.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/deepseek4v.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/deepseek4v.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/dots3note.cpp.o -c /llama.cpp/tools/mtmd/models/dots3note.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/dots3note.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/dots3note.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/dotsocr.cpp.o -c /llama.cpp/tools/mtmd/models/dotsocr.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/dotsocr.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/dotsocr.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/exaone4_5.cpp.o -c /llama.cpp/tools/mtmd/models/exaone4_5.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/exaone4_5.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/exaone4_5.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/gemma4a.cpp.o -c /llama.cpp/tools/mtmd/models/gemma4a.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/gemma4a.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/gemma4a.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/gemma4v.cpp.o -c /llama.cpp/tools/mtmd/models/gemma4v.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/gemma4v.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/gemma4v.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/gemma4ua.cpp.o -c /llama.cpp/tools/mtmd/models/gemma4ua.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/gemma4ua.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/gemma4ua.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/gemma4uv.cpp.o -c /llama.cpp/tools/mtmd/models/gemma4uv.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/gemma4uv.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/gemma4uv.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/glm4v.cpp.o -c /llama.cpp/tools/mtmd/models/glm4v.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/glm4v.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/glm4v.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/granite-speech.cpp.o -c /llama.cpp/tools/mtmd/models/granite-speech.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/granite-speech.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/granite-speech.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/granite4-vision.cpp.o -c /llama.cpp/tools/mtmd/models/granite4-vision.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/granite4-vision.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/granite4-vision.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/hunyuanvl.cpp.o -c /llama.cpp/tools/mtmd/models/hunyuanvl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/hunyuanvl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/hunyuanvl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/internvl.cpp.o -c /llama.cpp/tools/mtmd/models/internvl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/internvl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/internvl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/kimivl.cpp.o -c /llama.cpp/tools/mtmd/models/kimivl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/kimivl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/kimivl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/kimik25.cpp.o -c /llama.cpp/tools/mtmd/models/kimik25.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/kimik25.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/kimik25.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/nemotron-v2-vl.cpp.o -c /llama.cpp/tools/mtmd/models/nemotron-v2-vl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/nemotron-v2-vl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/nemotron-v2-vl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/muse-glimmer.cpp.o -c /llama.cpp/tools/mtmd/models/muse-glimmer.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/muse-glimmer.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/muse-glimmer.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/llama4.cpp.o -c /llama.cpp/tools/mtmd/models/llama4.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/llama4.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/llama4.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/llava.cpp.o -c /llama.cpp/tools/mtmd/models/llava.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/llava.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/llava.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/minicpmv.cpp.o -c /llama.cpp/tools/mtmd/models/minicpmv.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/minicpmv.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/minicpmv.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/paddleocr.cpp.o -c /llama.cpp/tools/mtmd/models/paddleocr.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/paddleocr.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/paddleocr.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/pixtral.cpp.o -c /llama.cpp/tools/mtmd/models/pixtral.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/pixtral.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/pixtral.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/qwen2vl.cpp.o -c /llama.cpp/tools/mtmd/models/qwen2vl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/qwen2vl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/qwen2vl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/minimax-m3.cpp.o -c /llama.cpp/tools/mtmd/models/minimax-m3.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/minimax-m3.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/minimax-m3.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/qwen3vl.cpp.o -c /llama.cpp/tools/mtmd/models/qwen3vl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/qwen3vl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/qwen3vl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/ling3vl.cpp.o -c /llama.cpp/tools/mtmd/models/ling3vl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/ling3vl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/ling3vl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/mimovl.cpp.o -c /llama.cpp/tools/mtmd/models/mimovl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/mimovl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/mimovl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/qwen3a.cpp.o -c /llama.cpp/tools/mtmd/models/qwen3a.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/qwen3a.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/qwen3a.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/mimo-audio.cpp.o -c /llama.cpp/tools/mtmd/models/mimo-audio.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/mimo-audio.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/mimo-audio.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/qwen3tts-spkenc.cpp.o -c /llama.cpp/tools/mtmd/models/qwen3tts-spkenc.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/qwen3tts-spkenc.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/qwen3tts-spkenc.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/qwen3tts-gen.cpp.o -c /llama.cpp/tools/mtmd/models/qwen3tts-gen.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/qwen3tts-gen.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/qwen3tts-gen.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/pockettts-seanet.cpp.o -c /llama.cpp/tools/mtmd/models/pockettts-seanet.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/pockettts-seanet.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/pockettts-seanet.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/pockettts-spkenc.cpp.o -c /llama.cpp/tools/mtmd/models/pockettts-spkenc.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/pockettts-spkenc.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/pockettts-spkenc.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/pockettts-gen.cpp.o -c /llama.cpp/tools/mtmd/models/pockettts-gen.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/pockettts-gen.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/pockettts-gen.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/step3vl.cpp.o -c /llama.cpp/tools/mtmd/models/step3vl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/step3vl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/step3vl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/siglip.cpp.o -c /llama.cpp/tools/mtmd/models/siglip.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/siglip.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/siglip.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/whisper-enc.cpp.o -c /llama.cpp/tools/mtmd/models/whisper-enc.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/whisper-enc.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/whisper-enc.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/deepseekocr.cpp.o -c /llama.cpp/tools/mtmd/models/deepseekocr.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/deepseekocr.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/deepseekocr.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/deepseekocr2.cpp.o -c /llama.cpp/tools/mtmd/models/deepseekocr2.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/deepseekocr2.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/deepseekocr2.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/mobilenetv5.cpp.o -c /llama.cpp/tools/mtmd/models/mobilenetv5.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/mobilenetv5.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/mobilenetv5.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/youtuvl.cpp.o -c /llama.cpp/tools/mtmd/models/youtuvl.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/youtuvl.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/youtuvl.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/yasa2.cpp.o -c /llama.cpp/tools/mtmd/models/yasa2.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/yasa2.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/yasa2.cpp.o"
+},
+{
+  "directory": "/build/llama.cpp/tools/mtmd",
+  "command": "/usr/bin/c++ -DGGML_USE_BLAS -DGGML_USE_CPU -DGGML_USE_METAL -DMTMD_VIDEO -I/llama.cpp/tools/mtmd/. -I/llama.cpp/ggml/src/../include -I/llama.cpp/src/../include -I/llama.cpp/vendor/hash/.. -I/llama.cpp/vendor/miniaudio/.. -I/llama.cpp/vendor/stb/.. -I/llama.cpp/vendor/sheredom/.. -g -std=gnu++17 -arch arm64 -fPIC -Wno-cast-qual -o CMakeFiles/mtmd.dir/models/parakeet.cpp.o -c /llama.cpp/tools/mtmd/models/parakeet.cpp",
+  "file": "/llama.cpp/tools/mtmd/models/parakeet.cpp",
+  "output": "llama.cpp/tools/mtmd/CMakeFiles/mtmd.dir/models/parakeet.cpp.o"
+}
+]
