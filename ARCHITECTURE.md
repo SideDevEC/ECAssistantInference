@@ -59,6 +59,14 @@ Flat C API — 70+ functions. Opaque handles for model, context, pool, conversat
 - C# layer adds `SemaphoreSlim` for higher-level coordination
 - Vision requires exclusive cycle-gate access (documented in CAPABILITY.md)
 
+### Structured logging (2026-09-25)
+- **Zero-overhead when disabled:** `g_log_cb` is NULL by default. Every `ECI_LOG(lvl, tag, fmt, ...)` macro checks the null pointer first — branch-predicted skip, no string formatting.
+- **C API:** `eci_set_log_callback(cb)` / `eci_set_log_level(level)` — caller registers a callback + minimum level
+- **Levels:** `ECI_LOG_DEBUG=0`, `INFO=1`, `WARN=2`, `ERROR=3`, `NONE=99` (disable all)
+- **Log sites:** `set_error()` (all error paths), chunked/batched `llama_decode` failures, model load success
+- **C# bridge:** `NativeLogBridge.Enable(Action<int,string,string>)` — pins the delegate + calls `EciNative.SetLogCallback`. Encapsulated in Inference layer, no dependency on LLM/Core loggers.
+- **Caller responsibility:** keep the `Action` alive (GC would collect it). Pass null to disable.
+
 ## C# Bindings (csharp/)
 
 ### Namespace structure
@@ -70,11 +78,12 @@ Flat C API — 70+ functions. Opaque handles for model, context, pool, conversat
 | `ECAssistantInference.Implementation` | Native wrappers implementing interfaces |
 | `ECAssistantInference.Models` | User-facing config records (ModelConfig, ContextConfig, etc.) |
 | `ECAssistantInference.Exceptions` | InferenceException + EciResult extension |
+| `ECAssistantInference.Logging` | NativeLogBridge — bridges C-level log callback to managed Action<int,string,string> |
 
 ### Design rules
 - One type per file, file named after type
 - Constructor injection (SafeHandle → wrapper)
-- No statics except `EciNative` (sanctioned interop exception)
+- No statics except `EciNative` (sanctioned interop exception) + `NativeLogBridge._pinned` (GC-pinned delegate, process-lifetime)
 - All native resources wrapped in SafeHandle
 - Factory: `NativeInferenceModel.Load(config)` creates model
 - `internal` on P/Invoke + structs; `public` on interfaces + wrappers + configs

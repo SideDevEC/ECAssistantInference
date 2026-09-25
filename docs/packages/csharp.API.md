@@ -1,6 +1,6 @@
 # csharp.API.md
 
-Types: 22  |  LOC: 1823  |  ~1531 tokens
+Types: 23  |  LOC: 1850  |  ~1570 tokens
 
 ---
 
@@ -144,6 +144,10 @@ Cross-package deps: ECAssistantInference.Abstractions, ECAssistantInference.Exce
 > Wraps an executor state (eci_state_t from eci_state_save).
 Implements: IInferenceState
 Cross-package deps: ECAssistantInference.Abstractions, ECAssistantInference.Exceptions, ECAssistantInference.Interop, ECAssistantInference.SafeHandles
+
+### Class: NativeLogBridge
+> Bridges native C-level logging (eci_set_log_callback) to a managed callback.
+Cross-package deps: ECAssistantInference.Interop
 
 ### Class: NativeStandardExecutor
 Implements: IStandardExecutor

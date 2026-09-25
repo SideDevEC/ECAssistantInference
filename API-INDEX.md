@@ -1,11 +1,11 @@
 # API-INDEX.md — ECAssistantInference
 
-Generated: 2026-09-25T18:25:29.949023+00:00
-Packages: 2  |  Types: 23
+Generated: 2026-09-25T20:39:46.190698+00:00
+Packages: 2  |  Types: 24
 
 ---
 
-## csharp (22 types, ~1823 LOC)
+## csharp (23 types, ~1850 LOC)
 
 - 🔵 IConversation : IDisposable  (csharp)
 - 🔵 IConversationPool : IDisposable  (csharp)
@@ -26,6 +26,7 @@ Packages: 2  |  Types: 23
 - 🟡 NativeInferenceContext : IInferenceContext  (csharp)
 - 🟡 NativeInferenceModel : IInferenceModel  (csharp)
 - 🟡 NativeInferenceState : IInferenceState  (csharp)
+- 🟡 NativeLogBridge  (csharp)
 - 🟡 NativeStandardExecutor : IStandardExecutor  (csharp)
 - 🟡 NativeVisionEncoder : IVisionEncoder  (csharp)
 - 🟡 SmokeTests  (csharp)
