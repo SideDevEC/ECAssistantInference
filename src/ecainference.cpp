@@ -7,6 +7,7 @@
 //
 // Thread safety: internal mutex serializes ALL native llama.cpp calls.
 #include "eci_internal.h"
+#include <cmath>
 #include <cstring>
 
 // ── Helpers ──
