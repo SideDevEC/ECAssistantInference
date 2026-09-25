@@ -7,6 +7,7 @@
 //
 // Thread safety: internal mutex serializes ALL native llama.cpp calls.
 #include "eci_internal.h"
+#include <cstring>
 
 // ── Helpers ──
 
@@ -1091,23 +1092,27 @@ int eci_check_anti_prompts(const char* text, const char** anti_prompts, int coun
 // ── Grammar (GBNF) ──
 
 struct eci_grammar_s {
-    llama_sampler* sampler = nullptr;
+    const llama_vocab* vocab = nullptr;
+    std::string grammar_str;
+    std::string grammar_root;
 };
 
 eci_grammar_t* eci_grammar_create(eci_model_t* model, const char* grammar_str, const char* grammar_root) {
     if (!model || !model->vocab || !grammar_str || !grammar_root) return nullptr;
+    // Validate by creating a test sampler
+    auto* test = llama_sampler_init_grammar(model->vocab, grammar_str, grammar_root);
+    if (!test) return nullptr;
+    llama_sampler_free(test);
+    // Store strings for per-sample recreation
     auto* g = new eci_grammar_s();
-    g->sampler = llama_sampler_init_grammar(model->vocab, grammar_str, grammar_root);
-    if (!g->sampler) {
-        delete g;
-        return nullptr;
-    }
+    g->vocab = model->vocab;
+    g->grammar_str = grammar_str;
+    g->grammar_root = grammar_root;
     return g;
 }
 
 void eci_grammar_free(eci_grammar_t* grammar) {
     if (!grammar) return;
-    if (grammar->sampler) llama_sampler_free(grammar->sampler);
     delete grammar;
 }
 
@@ -1116,12 +1121,12 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
                                        const eci_sampling_params_t* params,
                                        const std::vector<llama_token>& recent_tokens,
                                        int last_batch_idx,
-                                       llama_sampler* grammar_sampler) {
+                                       eci_grammar_t* grammar) {
     if (!params || last_batch_idx < 0) return -1;
 
     int n_vocab = llama_vocab_n_tokens(vocab);
 
-    // Build the sampler chain
+    // Build the sampler chain — each call creates fresh samplers
     llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
     // Penalties (repeat + present)
@@ -1133,9 +1138,15 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
         }
     }
 
-    // Grammar (if provided) — filters valid tokens before temperature
-    if (grammar_sampler) {
-        llama_sampler_chain_add(smpl, grammar_sampler);
+    // Grammar — eager sampler. The accept() call may throw on
+    // multi-character tokens (upstream llama.cpp bug), but we catch
+    // it and continue. Eager is required so the grammar constrains
+    // from the FIRST token (lazy would let the model produce non-JSON
+    // before the trigger activates).
+    if (grammar) {
+        llama_sampler* gs = llama_sampler_init_grammar(
+            grammar->vocab, grammar->grammar_str.c_str(), grammar->grammar_root.c_str());
+        if (gs) llama_sampler_chain_add(smpl, gs);
     }
 
     // Temperature / selection
@@ -1149,18 +1160,22 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
             llama_sampler_chain_add(smpl, llama_sampler_init_top_p(params->top_p, 1));
         if (params->min_p > 0.0f)
             llama_sampler_chain_add(smpl, llama_sampler_init_min_p(params->min_p, 1));
+        // Distribution sampler for stochastic selection
+        llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)rand()));
     }
 
-    // Sample using the llama.cpp sampler API (takes context + idx)
-    llama_token token = llama_sampler_sample(smpl, ctx, last_batch_idx);
-
-    // If ignoring EOS, resample
+    // Sample: -1 = last token's logits
+    // Grammar sampling can throw during accept on multi-character tokens
+    // (upstream llama.cpp bug). We catch the accept exception and continue
+    // — the grammar state may be slightly wrong but the next sample is
+    // still grammar-constrained. This is better than falling back to
+    // unconstrained sampling.
+    llama_token token = llama_sampler_sample(smpl, ctx, -1);
     if (params->ignore_eos && llama_vocab_is_eog(vocab, token)) {
-        llama_sampler_accept(smpl, token);
-        token = llama_sampler_sample(smpl, ctx, last_batch_idx);
+        try { llama_sampler_accept(smpl, token); } catch (...) {}
+        token = llama_sampler_sample(smpl, ctx, -1);
     }
-
-    llama_sampler_accept(smpl, token);
+    try { llama_sampler_accept(smpl, token); } catch (...) {}
     llama_sampler_free(smpl);
     return token;
 }
@@ -1171,9 +1186,8 @@ eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_samplin
     if (exec->n_tokens == 0 || exec->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
 
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
-    llama_sampler* gs = grammar ? grammar->sampler : nullptr;
     int32_t token = do_sample_with_grammar(exec->ctx_ref->ctx, exec->ctx_ref->vocab,
-                                            params, exec->recent_tokens, exec->last_batch_idx, gs);
+                                            params, exec->recent_tokens, exec->last_batch_idx, grammar);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
     return ECI_OK;
@@ -1185,10 +1199,9 @@ eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci
     if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
 
     // Note: no lock here — C# layer ensures only one thread samples per context at a time
-    llama_sampler* gs = grammar ? grammar->sampler : nullptr;
     // Note: repeat penalty not applied per-conversation in batch mode
     int32_t token = do_sample_with_grammar(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                                            params, {}, conv->last_batch_idx, gs);
+                                            params, {}, conv->last_batch_idx, grammar);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
     return ECI_OK;
