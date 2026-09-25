@@ -1,6 +1,6 @@
 # PACKAGE-MAP.md — csharp
 
-Generated: 2026-09-25T13:12:52.785331+00:00
+Generated: 2026-09-25T14:11:33.579151+00:00
 
 ---
 

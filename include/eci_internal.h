@@ -54,6 +54,10 @@ struct eci_conversation_s {
     bool has_pending_prompt = false;
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
+
+    // Persistent grammar sampler chain
+    llama_sampler* grammar_chain = nullptr;
+    bool grammar_initialized = false;
 };
 
 struct eci_pool_s {
@@ -71,6 +75,7 @@ struct eci_executor_s {
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
     std::vector<llama_token> recent_tokens;
+    llama_sampler* grammar_chain = nullptr;
 };
 
 struct eci_state_s {

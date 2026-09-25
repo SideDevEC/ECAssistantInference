@@ -1,6 +1,6 @@
 # API-INDEX.md — csharp
 
-Generated: 2026-09-25T13:12:52.784492+00:00
+Generated: 2026-09-25T14:11:33.578558+00:00
 Packages: 2  |  Types: 23
 
 ---

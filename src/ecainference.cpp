@@ -1118,11 +1118,42 @@ void eci_grammar_free(eci_grammar_t* grammar) {
 }
 
 // Helper: sample with optional grammar sampler chained
+// Get or create a persistent grammar sampler chain.
+// The chain is stored on the executor/conversation and survives across calls.
+// Prompt tokens are accepted into it on first use.
+static llama_sampler* get_or_init_grammar_chain(
+    llama_sampler** chain_ptr,
+    eci_grammar_t* grammar,
+    const std::vector<llama_token>& recent_tokens)
+{
+    if (!chain_ptr || !grammar) return nullptr;
+    if (*chain_ptr) return *chain_ptr;
+
+    // Create grammar-only chain (grammar must be first and only sampler)
+    llama_sampler* chain = llama_sampler_chain_init(llama_sampler_chain_default_params());
+    llama_sampler* gs = llama_sampler_init_grammar(
+        grammar->vocab, grammar->grammar_str.c_str(), grammar->grammar_root.c_str());
+    if (!gs) {
+        llama_sampler_free(chain);
+        return nullptr;
+    }
+    llama_sampler_chain_add(chain, gs);
+
+    // Accept prompt tokens to initialize grammar state
+    for (const auto& tok : recent_tokens) {
+        try { llama_sampler_accept(chain, tok); } catch (...) { break; }
+    }
+
+    *chain_ptr = chain;
+    return chain;
+}
+
 static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* vocab,
                                        const eci_sampling_params_t* params,
                                        const std::vector<llama_token>& recent_tokens,
                                        int last_batch_idx,
-                                       eci_grammar_t* grammar) {
+                                       eci_grammar_t* grammar,
+                                       llama_sampler** grammar_chain_ptr) {
     if (!params || last_batch_idx < 0) return -1;
 
     int n_vocab = llama_vocab_n_tokens(vocab);
@@ -1188,7 +1219,8 @@ eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_samplin
 
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
     int32_t token = do_sample_with_grammar(exec->ctx_ref->ctx, exec->ctx_ref->vocab,
-                                            params, exec->recent_tokens, exec->last_batch_idx, grammar);
+                                            params, exec->recent_tokens, exec->last_batch_idx, grammar,
+                                            &exec->grammar_chain);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
     return ECI_OK;
@@ -1199,10 +1231,9 @@ eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci
     if (!conv || !params || !out_token) return ECI_ERR_INVALID_ARG;
     if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
 
-    // Note: no lock here — C# layer ensures only one thread samples per context at a time
-    // Note: repeat penalty not applied per-conversation in batch mode
     int32_t token = do_sample_with_grammar(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                                            params, {}, conv->last_batch_idx, grammar);
+                                            params, {}, conv->last_batch_idx, grammar,
+                                            &conv->grammar_chain);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
     return ECI_OK;

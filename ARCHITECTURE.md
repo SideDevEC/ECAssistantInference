@@ -36,9 +36,11 @@ Flat C API — 70+ functions. Opaque handles for model, context, pool, conversat
 - `eci_grammar_t` — GBNF grammar sampler (llama_sampler_init_grammar)
 
 ### Grammar (GBNF)
-- `eci_grammar_create(model, grammar_str, grammar_root)` — creates grammar sampler
+- `eci_grammar_create(model, grammar_str, grammar_root)` — validates + stores grammar strings
 - `eci_executor_sample_grammar` / `eci_conversation_sample_grammar` — sample with grammar constraint
 - C# exposes `IGrammar` + `NativeGrammar` + `SampleWithGrammar()` on both executor and conversation
+- **Implementation:** persistent grammar chain on executor/conversation; grammar is FIRST in sampler chain; prompt tokens accepted into grammar before first sample (initializes state)
+- **Known issue:** llama.cpp `llama_grammar_accept` crashes on multi-character tokens that span grammar rules with optional whitespace (e.g. Qwen token `[{` spans `"[" ws toolcall`). Try/catch fallback produces unconstrained output. Upstream bug in `src/llama-grammar.cpp:1028` — empty stacks dropped in `llama_grammar_accept_chr`. Affects grammar-constrained tool call generation only; early-stop JSON parsing handles termination as fallback.
 
 ### Chat template
 - `eci_apply_chat_template(model, tmpl, messages, n_msg, add_assistant, out_text)` — wraps `llama_chat_apply_template`
@@ -129,5 +131,5 @@ Caller drives ALL config. Safety layer only intervenes on probe failure:
 - ✅ CMakeLists.txt — build system
 - ✅ .github/workflows/ci.yml — CI (build + test, no publish)
 
-**Status:** 43/43 C++ tests + 51/51 C# tests passing on macOS Metal. LDC PASSED.
+**Status:** 43/43 C++ tests + 51/51 C# tests passing on macOS Metal. ECAssistantLLM: 310/313 (3 grammar-constrained tool call tests — upstream llama.cpp bug). LDC PASSED.
 **Updated:** 2026-09-25 — added grammar, chat template, executor vision APIs
