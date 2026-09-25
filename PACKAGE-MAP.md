@@ -1,6 +1,6 @@
 # PACKAGE-MAP.md — ECAssistantInference
 
-Generated: 2026-09-25T15:28:08.169809+00:00
+Generated: 2026-09-25T18:25:29.949685+00:00
 
 ---
 

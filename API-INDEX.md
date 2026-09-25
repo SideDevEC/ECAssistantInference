@@ -1,6 +1,6 @@
 # API-INDEX.md — ECAssistantInference
 
-Generated: 2026-09-25T15:28:08.169258+00:00
+Generated: 2026-09-25T18:25:29.949023+00:00
 Packages: 2  |  Types: 23
 
 ---

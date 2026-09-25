@@ -315,35 +315,59 @@ eci_decode_result_t eci_executor_infer(eci_executor_t* exec) {
 
     if (exec->pending_tokens.empty()) return ECI_DECODE_NO_WORK;
 
+    // Chunk large prompts into ≤ n_batch slices — llama_decode ABORTS the process
+    // (GGML_ASSERT n_tokens_all <= n_batch) if handed more tokens in one call.
+    // LLamaSharp chunked transparently; this layer must do it itself.
+    const uint32_t n_batch = llama_n_batch(exec->ctx_ref->ctx);
+    if (n_batch == 0) return ECI_DECODE_FAILED;
     int n_tokens = (int)exec->pending_tokens.size();
-    llama_batch batch = llama_batch_init(n_tokens, 0, exec->ctx_ref->n_seq_max);
-    llama_seq_id seq0 = 0;
+    const int kv_base = exec->n_kv_pos;  // positions advance per slice — capture once
 
-    for (int i = 0; i < n_tokens; i++) {
-        batch.token[i] = exec->pending_tokens[i];
-        batch.pos[i] = exec->n_kv_pos + i;
-        batch.n_seq_id[i] = 1;
-        batch.seq_id[i][0] = seq0;
-        batch.logits[i] = (i == n_tokens - 1) ? 1 : 0;
-    }
-    batch.n_tokens = n_tokens;
+    int decoded = 0;
+    while (decoded < n_tokens) {
+        int slice = std::min((int)n_batch, n_tokens - decoded);
+        bool last_slice = (decoded + slice == n_tokens);
+        llama_batch batch = llama_batch_init(slice, 0, exec->ctx_ref->n_seq_max);
+        llama_seq_id seq0 = 0;
 
-    int rc = llama_decode(exec->ctx_ref->ctx, batch);
-    llama_batch_free(batch);
+        for (int i = 0; i < slice; i++) {
+            batch.token[i] = exec->pending_tokens[decoded + i];
+            batch.pos[i] = kv_base + decoded + i;
+            batch.n_seq_id[i] = 1;
+            batch.seq_id[i][0] = seq0;
+            batch.logits[i] = last_slice && (i == slice - 1) ? 1 : 0;
+        }
+        batch.n_tokens = slice;
 
-    if (rc == 0) {
+        int rc = llama_decode(exec->ctx_ref->ctx, batch);
+        llama_batch_free(batch);
+
+        if (rc != 0) {
+            // Decode failed — keep REMAINING pending tokens so caller can retry.
+            // Already-decoded slices were committed inside the loop (n_tokens/
+            // n_kv_pos/recent_tokens updated per slice — do NOT re-add here).
+            exec->recent_tokens.insert(exec->recent_tokens.end(),
+                                       exec->pending_tokens.begin(),
+                                       exec->pending_tokens.begin() + decoded);
+            exec->pending_tokens.erase(exec->pending_tokens.begin(),
+                                       exec->pending_tokens.begin() + decoded);
+            exec->ctx_ref->last_error = "llama_decode failed (rc=" + std::to_string(rc) + ")";
+            return ECI_DECODE_FAILED;
+        }
+
         exec->recent_tokens.insert(exec->recent_tokens.end(),
-                                   exec->pending_tokens.begin(), exec->pending_tokens.end());
-        exec->n_tokens += n_tokens;
-        exec->n_kv_pos += n_tokens;
-        exec->last_batch_idx = n_tokens - 1;
-        exec->pending_tokens.clear();
-        exec->has_pending = false;
-        return ECI_DECODE_OK;
+                                   exec->pending_tokens.begin() + decoded,
+                                   exec->pending_tokens.begin() + decoded + slice);
+        exec->n_tokens += slice;
+        exec->n_kv_pos += slice;
+        if (last_slice)
+            exec->last_batch_idx = slice - 1;  // index into THIS slice's logits
+        decoded += slice;
     }
-    // Decode failed — keep pending tokens so caller can retry.
-    // Do NOT advance n_tokens/n_kv_pos/last_batch_idx.
-    return ECI_DECODE_FAILED;
+
+    exec->pending_tokens.clear();
+    exec->has_pending = false;
+    return ECI_DECODE_OK;
 }
 
 eci_result_t eci_executor_sample(eci_executor_t* exec,
@@ -610,6 +634,7 @@ eci_decode_result_t eci_infer(eci_context_t* ctx) {
         eci_conversation_t* conv;
         std::vector<llama_token> tokens;
         int first_idx;  // first index in combined batch
+        int committed = 0;  // tokens already decoded (committed) from this conv
     };
     std::vector<conv_pending> pending;
     for (auto* conv : ctx->active_conversations) {
@@ -630,32 +655,66 @@ eci_decode_result_t eci_infer(eci_context_t* ctx) {
 
     if (all_tokens.empty()) return ECI_DECODE_NO_WORK;
 
-    int n_tokens = (int)all_tokens.size();
-    llama_batch batch = llama_batch_init(n_tokens, 0, ctx->n_seq_max);
+    // Chunk into ≤ n_batch slices — llama_decode ABORTS the process
+    // (GGML_ASSERT n_tokens_all <= n_batch) if handed more tokens in one call.
+    // LLamaSharp chunked transparently; this layer must do it itself.
+    const uint32_t n_batch = llama_n_batch(ctx->ctx);
+    if (n_batch == 0) { ctx->last_error = "n_batch is 0"; return ECI_DECODE_FAILED; }
 
-    for (int i = 0; i < n_tokens; i++) {
-        batch.token[i] = all_tokens[i];
-        batch.pos[i] = all_pos[i];
-        batch.n_seq_id[i] = 1;
-        batch.seq_id[i][0] = all_seq_ids[i];
-        batch.logits[i] = logits_indices.count(i) ? 1 : 0;
+    int total = (int)all_tokens.size();
+    int gi = 0;  // global index of current slice start
+    while (gi < total) {
+        int end = std::min(gi + (int)n_batch, total);
+        int n_slice = end - gi;
+        llama_batch batch = llama_batch_init(n_slice, 0, ctx->n_seq_max);
+
+        for (int i = gi; i < end; i++) {
+            batch.token[i - gi] = all_tokens[i];
+            batch.pos[i - gi] = all_pos[i];
+            batch.n_seq_id[i - gi] = 1;
+            batch.seq_id[i - gi][0] = all_seq_ids[i];
+            // logits only for a conv's final pending token when THIS slice covers it
+            batch.logits[i - gi] = logits_indices.count(i) ? 1 : 0;
+        }
+        batch.n_tokens = n_slice;
+
+        int rc = llama_decode(ctx->ctx, batch);
+        llama_batch_free(batch);
+
+        if (rc != 0) {
+            ctx->last_error = "llama_decode failed (rc=" + std::to_string(rc) + ")";
+            // Successfully decoded earlier slices are already committed. Trim the
+            // committed prefix from each conv's pending_tokens so a retry does not
+            // re-decode them (positions would then diverge from KV).
+            for (auto& cp : pending) {
+                if (cp.committed > 0)
+                    cp.conv->pending_tokens.erase(cp.conv->pending_tokens.begin(),
+                                                  cp.conv->pending_tokens.begin() + cp.committed);
+            }
+            return ECI_DECODE_FAILED;
+        }
+
+        // Commit per-conversation coverage of this slice
+        for (auto& cp : pending) {
+            int conv_start = cp.first_idx;
+            int conv_end = cp.first_idx + (int)cp.tokens.size();
+            int s = std::max(gi, conv_start);
+            int e = std::min(end, conv_end);
+            if (s >= e) continue;
+            int covered = e - s;
+            cp.conv->n_tokens += covered;
+            cp.conv->n_kv_pos += covered;
+            cp.conv->recent_tokens.insert(cp.conv->recent_tokens.end(),
+                                          cp.tokens.begin() + (s - conv_start),
+                                          cp.tokens.begin() + (s - conv_start) + covered);
+            cp.committed += covered;
+            if (e == conv_end)
+                cp.conv->last_batch_idx = conv_end - 1 - gi;  // logits index within THIS slice
+        }
+        gi = end;
     }
-    batch.n_tokens = n_tokens;
 
-    int rc = llama_decode(ctx->ctx, batch);
-    llama_batch_free(batch);
-
-    if (rc != 0) {
-        ctx->last_error = "llama_decode failed (rc=" + std::to_string(rc) + ")";
-        return ECI_DECODE_FAILED;
-    }
-    // Success — commit token counts and clear pending
     for (auto& cp : pending) {
-        cp.conv->n_tokens += (int)cp.tokens.size();
-        cp.conv->n_kv_pos += (int)cp.tokens.size();
-        cp.conv->last_batch_idx = cp.first_idx + (int)cp.tokens.size() - 1;
-        cp.conv->recent_tokens.insert(cp.conv->recent_tokens.end(),
-                                      cp.tokens.begin(), cp.tokens.end());
         cp.conv->pending_tokens.clear();
         cp.conv->has_pending_prompt = false;
     }
@@ -881,26 +940,40 @@ eci_result_t eci_conversation_prompt_with_images(eci_conversation_t* conv,
             // Text tokens use batch.token; image embeddings use batch.embd —
             // they cannot coexist in the same llama_batch.
             if (!conv->pending_tokens.empty()) {
-                int n_pending = (int)conv->pending_tokens.size();
-                llama_batch tbatch = llama_batch_init(n_pending, 0, 1);
-                for (int j = 0; j < n_pending; j++) {
-                    tbatch.token[j] = conv->pending_tokens[j];
-                    tbatch.pos[j] = conv->n_kv_pos + j;
-                    tbatch.n_seq_id[j] = 1;
-                    tbatch.seq_id[j][0] = conv->seq_id;
-                    tbatch.logits[j] = 0;
-                }
-                tbatch.n_tokens = n_pending;
-                int rc2 = llama_decode(conv->ctx, tbatch);
-                llama_batch_free(tbatch);
-                if (rc2 != 0) {
+                // Chunked flush: llama_decode aborts if n_tokens_all > n_batch
+                const uint32_t vflush_n_batch = llama_n_batch(conv->ctx);
+                if (vflush_n_batch == 0) {
                     mtmd_input_chunks_free(chunks);
-                    set_error(nullptr, std::string("text flush before image decode failed: ") + std::to_string(rc2));
+                    set_error(nullptr, "n_batch is 0");
                     return ECI_ERR_DECODE_FAILED;
                 }
-                conv->n_tokens += n_pending; conv->n_kv_pos += n_pending;
-                conv->recent_tokens.insert(conv->recent_tokens.end(),
-                                           conv->pending_tokens.begin(), conv->pending_tokens.end());
+                const int vflush_base = conv->n_kv_pos;  // capture once — advance per slice
+                int flushed = 0;
+                while (flushed < (int)conv->pending_tokens.size()) {
+                    int n_slice = std::min((int)vflush_n_batch,
+                                           (int)conv->pending_tokens.size() - flushed);
+                    llama_batch tbatch = llama_batch_init(n_slice, 0, 1);
+                    for (int j = 0; j < n_slice; j++) {
+                        tbatch.token[j] = conv->pending_tokens[flushed + j];
+                        tbatch.pos[j] = vflush_base + flushed + j;
+                        tbatch.n_seq_id[j] = 1;
+                        tbatch.seq_id[j][0] = conv->seq_id;
+                        tbatch.logits[j] = 0;
+                    }
+                    tbatch.n_tokens = n_slice;
+                    int rc2 = llama_decode(conv->ctx, tbatch);
+                    llama_batch_free(tbatch);
+                    if (rc2 != 0) {
+                        mtmd_input_chunks_free(chunks);
+                        set_error(nullptr, std::string("text flush before image decode failed: ") + std::to_string(rc2));
+                        return ECI_ERR_DECODE_FAILED;
+                    }
+                    conv->n_tokens += n_slice; conv->n_kv_pos += n_slice;
+                    conv->recent_tokens.insert(conv->recent_tokens.end(),
+                                               conv->pending_tokens.begin() + flushed,
+                                               conv->pending_tokens.begin() + flushed + n_slice);
+                    flushed += n_slice;
+                }
                 conv->pending_tokens.clear();
             }
 

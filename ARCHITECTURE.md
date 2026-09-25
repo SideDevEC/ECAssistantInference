@@ -2,6 +2,8 @@
 
 **Summary:** C/C++ inference engine linking llama.cpp directly, with C# P/Invoke bindings. Replaces LLamaSharp.
 
+**Addendum 2026-09-25 (chunked decode — n_batch safety):** `llama_decode` ABORTS the process (GGML_ASSERT `n_tokens_all <= n_batch`) when handed more tokens than one batch. LLamaSharp chunked transparently; this layer must do it itself. All three decode sites now chunk pending tokens into ≤ `n_batch` slices with positions advancing per slice: (1) `eci_executor_infer` (standard path) — logits only on the final token of the final slice; failed slices keep the REMAINING pending tokens so retry doesn't re-decode committed ones. (2) batched `eci_infer` — per-conversation coverage committed per slice (`committed` tracking; on failure the committed prefix is trimmed so positions don't diverge from KV). (3) `eci_conversation_prompt_with_images` text flush before image decode. New stress test: `batched_large_prompt_small_nbatch` (prompt ≫ n_batch, sample right after chunked prefill). C++ tests: stress 30/30, basic 14/14.
+
 ## Layers
 
 ```

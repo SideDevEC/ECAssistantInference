@@ -630,6 +630,42 @@ static void test_batched_partial_prompt() {
 }
 
 // ====================================================
+// 7b. Large prompt vs small n_batch (chunked decode regression)
+// ====================================================
+
+static void test_batched_large_prompt_small_nbatch() {
+    // Prompt far exceeding n_batch — llama_decode must never see more than
+    // n_batch tokens per call (GGML_ASSERT crash otherwise, kills the server).
+    eci_model_t* m = make_model();
+    eci_context_t* ctx = make_ctx(m, 4096, 64, 1);
+    eci_pool_t* pool = nullptr;
+    ASSERT_EQ(eci_pool_create(ctx, &pool), ECI_OK);
+
+    eci_conversation_t* conv = nullptr;
+    ASSERT_EQ(eci_pool_lease(pool, &conv), ECI_OK);
+
+    // Build a prompt well over 64 tokens
+    std::string prompt;
+    for (int i = 0; i < 40; i++) prompt += "The quick brown fox jumps over the lazy dog number " + std::to_string(i) + ". ";
+    ASSERT_EQ(eci_conversation_prompt(conv, prompt.c_str()), ECI_OK);
+
+    ASSERT_EQ(eci_infer(ctx), ECI_DECODE_OK);
+    ASSERT(eci_conversation_token_count(conv) > 64);
+
+    // Sampling right after chunked prefill must work (logits from last slice)
+    eci_sampling_params_t sp = {};
+    sp.temperature = 0.3f; sp.top_p = 0.95f; sp.top_k = 40; sp.max_tokens = 16;
+    int32_t tok = -1;
+    ASSERT_EQ(eci_conversation_sample(conv, &sp, &tok), ECI_OK);
+    ASSERT(tok >= 0);
+
+    ASSERT_EQ(eci_pool_return(pool, conv), ECI_OK);
+    eci_pool_free(pool);
+    eci_free_context(ctx);
+    eci_free_model(m);
+}
+
+// ====================================================
 // 8. Repeated generation (resource leak detection)
 // ====================================================
 
@@ -924,6 +960,7 @@ int main() {
     TEST(batched_mixed_sizes);
     TEST(batched_infer_no_work);
     TEST(batched_partial_prompt);
+    TEST(batched_large_prompt_small_nbatch);
     TEST(repeated_generation);
     TEST(repeated_pool_cycles);
     TEST(backend_probe);
