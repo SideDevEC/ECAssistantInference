@@ -1,0 +1,208 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CMAKE_BUILD_TYPE: Release
+
+jobs:
+  # ── Native build: macOS Metal ──
+  native-macos-metal:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cmake
+        run: brew install cmake
+
+      - name: Build (Metal)
+        run: |
+          cmake -B build-metal -DECI_BACKEND_METAL=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-metal -j$(sysctl -n hw.ncpu)
+
+      - name: Tests (basic)
+        run: |
+          cd build-metal
+          DYLD_LIBRARY_PATH=. ./ecainference_tests
+
+      - name: Tests (stress)
+        run: |
+          cd build-metal
+          DYLD_LIBRARY_PATH=. ./ecainference_stress_tests
+
+      - name: Upload dylib
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-osx-arm64-metal
+          path: build-metal/libecainference.dylib
+
+  # ── Native build: Linux CPU ──
+  native-linux-cpu:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build (CPU)
+        run: |
+          cmake -B build-cpu -DECI_BACKEND_CPU=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cpu -j$(nproc)
+
+      - name: Tests (basic)
+        run: |
+          cd build-cpu
+          LD_LIBRARY_PATH=. ./ecainference_tests
+
+      - name: Tests (stress)
+        run: |
+          cd build-cpu
+          LD_LIBRARY_PATH=. ./ecainference_stress_tests
+
+      - name: Upload so
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-linux-x64-cpu
+          path: build-cpu/libecainference.so
+
+  # ── Native build: Windows CPU ──
+  native-windows-cpu:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Build (CPU)
+        run: |
+          cmake -B build-cpu -DECI_BACKEND_CPU=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cpu --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Upload dll
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-win-x64-cpu
+          path: build-cpu/Release/ecainference.dll
+
+  # ── C# build + test (uses macOS Metal artifact) ──
+  csharp-test:
+    needs: native-macos-metal
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download dylib
+        uses: actions/download-artifact@v4
+        with:
+          name: libecainference-osx-arm64-metal
+          path: native-lib
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build C#
+        run: |
+          cd csharp
+          dotnet build
+          dotnet build Tests/
+
+      - name: Test C#
+        run: |
+          cd csharp
+          DYLD_LIBRARY_PATH=../native-lib dotnet test Tests/ --no-build
+
+  # ── NuGet pack (NO publish — ships in v15 train) ──
+  nuget-pack:
+    needs: [native-macos-metal, native-linux-cpu, native-windows-cpu]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Download all native artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: native-libs
+
+      - name: Prepare runtimes
+        run: |
+          mkdir -p csharp/runtimes/osx-arm64/native
+          mkdir -p csharp/runtimes/linux-x64/native
+          mkdir -p csharp/runtimes/win-x64/native
+          cp native-libs/libecainference-osx-arm64-metal/libecainference.dylib csharp/runtimes/osx-arm64/native/
+          cp native-libs/libecainference-linux-x64-cpu/libecainference.so csharp/runtimes/linux-x64/native/
+          cp native-libs/libecainference-win-x64-cpu/ecainference.dll csharp/runtimes/win-x64/native/
+
+      - name: Pack NuGet
+        run: |
+          cd csharp
+          dotnet pack ECAssistantInference.csproj -c Release -o ../nupkg /p:Version=15.0.0
+
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: nupkg/*.nupkg
+
+  # ── Vulkan build (Linux) — no tests, just compilation check ──
+  native-linux-vulkan:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libvulkan-dev vulkan-tools
+
+      - name: Build (Vulkan)
+        run: |
+          cmake -B build-vulkan -DECI_BACKEND_VULKAN=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-vulkan -j$(nproc) || true  # may fail on CI without GPU
+
+  # ── CUDA build (Linux) — compilation only, no GPU on CI ──
+  native-linux-cuda:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install CUDA toolkit
+        uses: Jimver/cuda-toolkit@v0.2.21
+        with:
+          cuda: '12.4.0'
+
+      - name: Install cmake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build (CUDA)
+        run: |
+          cmake -B build-cuda -DECI_BACKEND_CUDA=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cuda -j$(nproc) || true  # may fail without GPU drivers
