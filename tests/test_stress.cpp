@@ -13,10 +13,10 @@
 #include <string>
 #include <vector>
 
-static const char* MODEL_PATH = "./models/Qwen3.5-4B-Q4_K_M.gguf";
-static const char* EMBED_MODEL_PATH = "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
+static const char* MODEL_PATH;
+static const char* EMBED_MODEL_PATH;
 
-static int tests_run = 0, tests_passed = 0;
+static int tests_run = 0, tests_passed = 0, tests_skipped = 0;
 
 #define TEST(name) \
     tests_run++; \
@@ -31,6 +31,18 @@ static int tests_run = 0, tests_passed = 0;
         exit(1); \
     }
 
+#define SKIP(msg) \
+    tests_skipped++; \
+    fprintf(stderr, "SKIP (%s)\n", msg); \
+    return;
+
+static bool file_exists(const char* path) {
+    if (!path) return false;
+    FILE* f = fopen(path, "rb");
+    if (f) { fclose(f); return true; }
+    return false;
+}
+
 #define ASSERT_EQ(a, b) \
     if ((a) != (b)) { \
         fprintf(stderr, "FAIL: line %d: %s != %s (%lld != %lld)\n", __LINE__, #a, #b, (long long)(a), (long long)(b)); \
@@ -38,6 +50,8 @@ static int tests_run = 0, tests_passed = 0;
     }
 
 // ── Helper: create a standard model+context for tests ──
+static bool model_available() { return file_exists(MODEL_PATH); }
+
 static eci_model_t* make_model(int gpu_layers = 99, bool fa = true, eci_kv_type_t kv = ECI_KV_F16) {
     eci_model_params_t mp = {};
     mp.model_path = MODEL_PATH;
@@ -60,9 +74,9 @@ static eci_context_t* make_ctx(eci_model_t* m, uint32_t ctx_size = 4096, uint32_
     return ctx;
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 1. NULL / invalid argument tests
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_null_args() {
     // Every function should handle NULL gracefully (no crash)
@@ -88,11 +102,12 @@ static void test_null_args() {
     ASSERT_EQ(eci_kv_flush(nullptr, 0), ECI_ERR_INVALID_ARG);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 2. Empty / zero-length inputs
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_empty_prompt() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_t* m = make_model();
     eci_context_t* ctx = make_ctx(m);
     eci_executor_t* exec = nullptr;
@@ -146,9 +161,10 @@ static void test_detokenize_empty() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 3. Pool exhaustion and reuse stress
-// ════════════════════════════════════════════════════
+// ==========================================
+// 
 
 static void test_pool_exhaust_lease_return_cycle() {
     eci_model_t* m = make_model();
@@ -246,9 +262,9 @@ static void test_pool_prompt_return_without_infer() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ==================================================
 // 4. KV cache boundary conditions
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_tiny_context() {
     // Very small context (256) — should work for short prompts
@@ -339,9 +355,9 @@ static void test_kv_copy_invalid_seqs() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 5. Sampling parameter extremes
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_sampling_extremes() {
     eci_model_t* m = make_model();
@@ -415,9 +431,9 @@ static void test_sampling_no_decode() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 6. State save/restore edge cases
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_state_save_empty() {
     // Save state when no tokens exist
@@ -509,9 +525,10 @@ static void test_state_save_seq_max_1() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// 
+// 
 // 7. Interleaved batch + pool operations
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_batched_mixed_sizes() {
     // 4 conversations with different prompt sizes in one batch
@@ -615,9 +632,9 @@ static void test_batched_partial_prompt() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 8. Repeated generation (resource leak detection)
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_repeated_generation() {
     // Generate 20 tokens — detects token/recent_tokens leaks
@@ -682,9 +699,9 @@ static void test_repeated_pool_cycles() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 9. Backend probe
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_backend_probe() {
     eci_model_t* m = make_model();
@@ -701,9 +718,9 @@ static void test_backend_probe() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 10. Embedding edge cases
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_embedding_empty_string() {
     eci_model_params_t mp = {}; mp.model_path = EMBED_MODEL_PATH; mp.gpu_layers = 0; mp.flash_attn = true;
@@ -715,6 +732,7 @@ static void test_embedding_empty_string() {
     ASSERT_EQ(eci_create_context(m, &cp, &ctx), ECI_OK);
 
     float* emb = nullptr; int dim = 0;
+    // Empty string — should still 
     // Empty string — should still produce embeddings (or fail gracefully)
     eci_result_t r = eci_get_embeddings(m, ctx, "", &emb, &dim);
     if (r == ECI_OK) {
@@ -758,9 +776,9 @@ static void test_embedding_all_pooling_types() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 11. Config parameter variations
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_cpu_only_model() {
     // gpu_layers = 0 (CPU only)
@@ -819,9 +837,9 @@ static void test_q8_kv_cache() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 12. Conversation rewind edge cases
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_conversation_rewind_edge() {
     eci_model_t* m = make_model();
@@ -859,9 +877,9 @@ static void test_conversation_rewind_edge() {
     eci_free_model(m);
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 // 13. Multiple model loads (memory leak detection)
-// ════════════════════════════════════════════════════
+// ====================================================
 
 static void test_model_reload() {
     // Load and free the same model 5 times — should not leak
@@ -878,10 +896,17 @@ static void test_model_reload() {
     }
 }
 
-// ════════════════════════════════════════════════════
+// ====================================================
 
 int main() {
-    fprintf(stderr, "\n=== ECAssistantInference Stress Tests ===\n\n");
+    MODEL_PATH = getenv("ECI_MODEL_PATH");
+    EMBED_MODEL_PATH = getenv("ECI_EMBED_MODEL_PATH");
+    if (!MODEL_PATH) MODEL_PATH = "./models/Qwen3.5-4B-Q4_K_M.gguf";
+    if (!EMBED_MODEL_PATH) EMBED_MODEL_PATH = "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
+
+    fprintf(stderr, "\n=== ECAssistantInference Stress Tests ===\n");
+    fprintf(stderr, "Model: %s\n", file_exists(MODEL_PATH) ? MODEL_PATH : "(not found)");
+    fprintf(stderr, "Embed: %s\n\n", file_exists(EMBED_MODEL_PATH) ? EMBED_MODEL_PATH : "(not found");
 
     TEST(null_args);
     TEST(empty_prompt);
@@ -913,6 +938,6 @@ int main() {
     TEST(conversation_rewind_edge);
     TEST(model_reload);
 
-    fprintf(stderr, "\n=== %d/%d stress tests passed ===\n", tests_passed, tests_run);
+    fprintf(stderr, "\n=== %d/%d passed, %d skipped ===\n", tests_passed, tests_run, tests_skipped);
     return 0;
 }

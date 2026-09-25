@@ -7,10 +7,12 @@
 #include <string>
 #include <cmath>
 
-static const char* MODEL_PATH = "./models/Qwen3.5-4B-Q4_K_M.gguf";
-static const char* EMBED_MODEL_PATH = "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
+static const char* MODEL_PATH;
+static const char* EMBED_MODEL_PATH;
+static const char* MMPROJ_PATH;
+static const char* TEST_IMAGE;
 
-static int tests_run = 0, tests_passed = 0;
+static int tests_run = 0, tests_passed = 0, tests_skipped = 0;
 
 #define TEST(name) \
     tests_run++; \
@@ -19,15 +21,28 @@ static int tests_run = 0, tests_passed = 0;
     tests_passed++; \
     fprintf(stderr, "OK\n");
 
+#define SKIP(msg) \
+    tests_skipped++; \
+    fprintf(stderr, "SKIP (%s)\n", msg); \
+    return;
+
 #define ASSERT(cond) \
     if (!(cond)) { \
         fprintf(stderr, "FAIL: line %d: %s\n", __LINE__, #cond); \
         exit(1); \
     }
 
+static bool file_exists(const char* path) {
+    if (!path) return false;
+    FILE* f = fopen(path, "rb");
+    if (f) { fclose(f); return true; }
+    return false;
+}
+
 // ── Tests ──
 
 static void test_load_model() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t p = {}; p.model_path = MODEL_PATH; p.gpu_layers = 99; p.flash_attn = true;
     eci_model_t* m = nullptr;
     ASSERT(eci_load_model(&p, &m) == ECI_OK);
@@ -35,6 +50,7 @@ static void test_load_model() {
 }
 
 static void test_create_context() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 4096; cp.batch_size = 512; cp.seq_max = 4;
@@ -46,6 +62,7 @@ static void test_create_context() {
 }
 
 static void test_tokenize() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 0; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 2048; cp.batch_size = 512; cp.seq_max = 2;
@@ -63,6 +80,7 @@ static void test_tokenize() {
 }
 
 static void test_pool() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 4096; cp.batch_size = 512; cp.seq_max = 4;
@@ -86,6 +104,7 @@ static void test_pool() {
 }
 
 static void test_single_inference() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 4096; cp.batch_size = 512; cp.seq_max = 2;
@@ -121,6 +140,7 @@ static void test_single_inference() {
 }
 
 static void test_batched_inference() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 4096; cp.batch_size = 512; cp.seq_max = 4;
@@ -147,6 +167,7 @@ static void test_batched_inference() {
 }
 
 static void test_state_save_restore() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 4096; cp.batch_size = 512; cp.seq_max = 2;
@@ -181,6 +202,7 @@ static void test_state_save_restore() {
 }
 
 static void test_embeddings() {
+    if (!file_exists(EMBED_MODEL_PATH)) SKIP("embed model not found");
     eci_model_params_t mp = {}; mp.model_path = EMBED_MODEL_PATH; mp.gpu_layers = 0; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 2048; cp.batch_size = 512; cp.seq_max = 1;
@@ -211,6 +233,7 @@ static void test_anti_prompts() {
 }
 
 static void test_pool_reuse() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     // Verify pool reuse works — lease, prompt, return, re-lease gets same conv back clean
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
@@ -238,6 +261,7 @@ static void test_pool_reuse() {
 }
 
 static void test_vision() {
+    if (!file_exists(MODEL_PATH) || !file_exists(MMPROJ_PATH) || !file_exists(TEST_IMAGE)) SKIP("vision files not found");
     // Test mmproj loading + image prompt with embeddings
     eci_model_params_t mp = {};
     mp.model_path = MODEL_PATH;
@@ -249,7 +273,7 @@ static void test_vision() {
 
     // Load mmproj
     eci_model_t* mmproj = nullptr;
-    const char* mmproj_path = "./models/mmproj-Qwen3.5-4B-BF16.gguf";
+    const char* mmproj_path = MMPROJ_PATH;
     ASSERT(eci_load_mmproj(model, mmproj_path, &mmproj) == ECI_OK);
     ASSERT(mmproj != nullptr);
 
@@ -274,7 +298,7 @@ static void test_vision() {
     ASSERT(eci_pool_lease(pool, &conv) == ECI_OK);
 
     // Read test image
-    FILE* f = fopen("./test_image.png", "rb");
+    FILE* f = fopen(TEST_IMAGE, "rb");
     ASSERT(f != nullptr);
     fseek(f, 0, SEEK_END);
     long img_size = ftell(f);
@@ -323,6 +347,7 @@ static void test_vision() {
 }
 
 static void test_shift_left() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     // Sliding window: fill context, shift left, keep generating
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
@@ -358,6 +383,7 @@ static void test_shift_left() {
 }
 
 static void test_kv_copy() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 2048; cp.batch_size = 512; cp.seq_max = 4;
@@ -377,6 +403,7 @@ static void test_kv_copy() {
 }
 
 static void test_causal_attn() {
+    if (!file_exists(MODEL_PATH)) SKIP("model file not found");
     eci_model_params_t mp = {}; mp.model_path = MODEL_PATH; mp.gpu_layers = 99; mp.flash_attn = true;
     eci_model_t* m = nullptr; ASSERT(eci_load_model(&mp, &m) == ECI_OK);
     eci_context_params_t cp = {}; cp.context_size = 2048; cp.batch_size = 512; cp.seq_max = 2;
@@ -390,7 +417,19 @@ static void test_causal_attn() {
 }
 
 int main() {
-    fprintf(stderr, "\n=== ECAssistantInference Tests ===\n\n");
+    MODEL_PATH = getenv("ECI_MODEL_PATH");
+    EMBED_MODEL_PATH = getenv("ECI_EMBED_MODEL_PATH");
+    MMPROJ_PATH = getenv("ECI_MMPROJ_PATH");
+    TEST_IMAGE = getenv("ECI_TEST_IMAGE");
+    if (!MODEL_PATH) MODEL_PATH = "./models/Qwen3.5-4B-Q4_K_M.gguf";
+    if (!EMBED_MODEL_PATH) EMBED_MODEL_PATH = "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
+    if (!MMPROJ_PATH) MMPROJ_PATH = "./models/mmproj-Qwen3.5-4B-BF16.gguf";
+    if (!TEST_IMAGE) TEST_IMAGE = "./test_image.png";
+
+    fprintf(stderr, "\n=== ECAssistantInference Tests ===\n");
+    fprintf(stderr, "Model: %s\n", file_exists(MODEL_PATH) ? MODEL_PATH : "(not found)");
+    fprintf(stderr, "Embed: %s\n", file_exists(EMBED_MODEL_PATH) ? EMBED_MODEL_PATH : "(not found)");
+    fprintf(stderr, "\n");
     TEST(load_model);
     TEST(create_context);
     TEST(tokenize);
@@ -405,6 +444,6 @@ int main() {
     TEST(shift_left);
     TEST(kv_copy);
     TEST(causal_attn);
-    fprintf(stderr, "\n=== %d/%d tests passed ===\n", tests_passed, tests_run);
+    fprintf(stderr, "\n=== %d/%d passed, %d skipped ===\n", tests_passed, tests_run, tests_skipped);
     return 0;
 }

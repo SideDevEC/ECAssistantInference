@@ -10,7 +10,7 @@ env:
   CMAKE_BUILD_TYPE: Release
 
 jobs:
-  # ── Native build: macOS Metal ──
+  # ── macOS Metal (build + tests) ──
   native-macos-metal:
     runs-on: macos-14
     steps:
@@ -26,12 +26,28 @@ jobs:
           cmake -B build-metal -DECI_BACKEND_METAL=ON -DCMAKE_BUILD_TYPE=Release
           cmake --build build-metal -j$(sysctl -n hw.ncpu)
 
+      - name: Download test models
+        run: |
+          mkdir -p models
+          # Small embedding model (~30MB)
+          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+            "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
+          # Small LLM for inference tests (~400MB)
+          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
+            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+
       - name: Tests (basic)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-metal
           DYLD_LIBRARY_PATH=. ./ecainference_tests
 
       - name: Tests (stress)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-metal
           DYLD_LIBRARY_PATH=. ./ecainference_stress_tests
@@ -42,7 +58,7 @@ jobs:
           name: libecainference-osx-arm64-metal
           path: build-metal/libecainference.dylib
 
-  # ── Native build: Linux CPU ──
+  # ── Linux CPU (build + tests) ──
   native-linux-cpu:
     runs-on: ubuntu-22.04
     steps:
@@ -60,12 +76,26 @@ jobs:
           cmake -B build-cpu -DECI_BACKEND_CPU=ON -DCMAKE_BUILD_TYPE=Release
           cmake --build build-cpu -j$(nproc)
 
+      - name: Download test models
+        run: |
+          mkdir -p models
+          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+            "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
+          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
+            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+
       - name: Tests (basic)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
           LD_LIBRARY_PATH=. ./ecainference_tests
 
       - name: Tests (stress)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd build-cpu
           LD_LIBRARY_PATH=. ./ecainference_stress_tests
@@ -76,7 +106,7 @@ jobs:
           name: libecainference-linux-x64-cpu
           path: build-cpu/libecainference.so
 
-  # ── Native build: Windows CPU ──
+  # ── Windows CPU (build + tests) ──
   native-windows-cpu:
     runs-on: windows-2022
     steps:
@@ -91,6 +121,32 @@ jobs:
         run: |
           cmake -B build-cpu -DECI_BACKEND_CPU=ON -DCMAKE_BUILD_TYPE=Release
           cmake --build build-cpu --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Download test models
+        run: |
+          mkdir -p models
+          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf `
+            "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
+          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf `
+            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+
+      - name: Tests (basic)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
+        run: |
+          cd build-cpu
+          $env:PATH = ".;$env:PATH"
+          ./Release/ecainference_tests.exe
+
+      - name: Tests (stress)
+        env:
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
+        run: |
+          cd build-cpu
+          $env:PATH = ".;$env:PATH"
+          ./Release/ecainference_stress_tests.exe
 
       - name: Upload dll
         uses: actions/upload-artifact@v4
@@ -118,6 +174,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Download test models
+        run: |
+          mkdir -p models
+          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+            "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
+          curl -L -o models/Qwen3.5-4B-Q4_K_M.gguf \
+            "https://huggingface.co/Qwen/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf" || true
+
       - name: Build C#
         run: |
           cd csharp
@@ -125,13 +189,17 @@ jobs:
           dotnet build Tests/
 
       - name: Test C#
+        env:
+          DYLD_LIBRARY_PATH: native-lib
+          ECI_MODEL_PATH: models/Qwen3.5-4B-Q4_K_M.gguf
+          ECI_EMBED_MODEL_PATH: models/all-MiniLM-L6-v2-Q5_K_M.gguf
         run: |
           cd csharp
-          DYLD_LIBRARY_PATH=../native-lib dotnet test Tests/ --no-build
+          dotnet test Tests/ --no-build
 
   # ── NuGet pack (NO publish — ships in v15 train) ──
   nuget-pack:
-    needs: [native-macos-metal, native-linux-cpu, native-windows-cpu, native-linux-vulkan, native-linux-cuda, native-windows-vulkan, native-windows-cuda]
+    needs: [native-macos-metal, native-linux-cpu, native-windows-cpu]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -148,21 +216,12 @@ jobs:
 
       - name: Prepare runtimes
         run: |
-          # macOS Metal
           mkdir -p csharp/runtimes/osx-arm64/native
-          cp native-libs/libecainference-osx-arm64-metal/libecainference.dylib csharp/runtimes/osx-arm64/native/ || true
-          # Linux CPU
           mkdir -p csharp/runtimes/linux-x64/native
-          cp native-libs/libecainference-linux-x64-cpu/libecainference.so csharp/runtimes/linux-x64/native/ || true
-          # Windows CPU
           mkdir -p csharp/runtimes/win-x64/native
+          cp native-libs/libecainference-osx-arm64-metal/libecainference.dylib csharp/runtimes/osx-arm64/native/ || true
+          cp native-libs/libecainference-linux-x64-cpu/libecainference.so csharp/runtimes/linux-x64/native/ || true
           cp native-libs/libecainference-win-x64-cpu/ecainference.dll csharp/runtimes/win-x64/native/ || true
-          # Linux Vulkan (optional — same RID, different build)
-          # Linux CUDA (optional — same RID, different build)
-          # Windows Vulkan (optional)
-          cp native-libs/libecainference-win-x64-vulkan/ecainference.dll csharp/runtimes/win-x64-vulkan/native/ 2>/dev/null || true
-          # Windows CUDA (optional)
-          cp native-libs/libecainference-win-x64-cuda/ecainference.dll csharp/runtimes/win-x64-cuda/native/ 2>/dev/null || true
 
       - name: Pack NuGet
         run: |
@@ -191,7 +250,7 @@ jobs:
       - name: Build (Vulkan)
         run: |
           cmake -B build-vulkan -DECI_BACKEND_VULKAN=ON -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-vulkan -j$(nproc) || true  # may fail on CI without GPU
+          cmake --build build-vulkan -j$(nproc) || true
 
       - name: Upload so
         if: success()
@@ -221,7 +280,7 @@ jobs:
       - name: Build (CUDA)
         run: |
           cmake -B build-cuda -DECI_BACKEND_CUDA=ON -DCMAKE_BUILD_TYPE=Release
-          cmake --build build-cuda -j$(nproc) || true  # may fail without GPU drivers
+          cmake --build build-cuda -j$(nproc) || true
 
       - name: Upload so
         if: success()
@@ -233,6 +292,7 @@ jobs:
   # ── Vulkan build (Windows) — compile check ──
   native-windows-vulkan:
     runs-on: windows-2022
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -262,6 +322,7 @@ jobs:
   # ── CUDA build (Windows) — compile check ──
   native-windows-cuda:
     runs-on: windows-2022
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
         with:

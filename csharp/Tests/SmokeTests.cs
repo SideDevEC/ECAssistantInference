@@ -14,9 +14,9 @@ namespace ECAssistantInference.Tests;
 /// </summary>
 public class SmokeTests
 {
-    private const string ModelPath = "./models/Qwen3.5-4B-Q4_K_M.gguf";
-    private const string EmbedModelPath = "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
-    private const string MmprojPath = "./models/mmproj-Qwen3.5-4B-BF16.gguf";
+    private static readonly string ModelPath = Environment.GetEnvironmentVariable("ECI_MODEL_PATH") ?? "./models/Qwen3.5-4B-Q4_K_M.gguf";
+    private static readonly string EmbedModelPath = Environment.GetEnvironmentVariable("ECI_EMBED_MODEL_PATH") ?? "./models/all-MiniLM-L6-v2-Q5_K_M.gguf";
+    private static readonly string MmprojPath = Environment.GetEnvironmentVariable("ECI_MMPROJ_PATH") ?? "./models/mmproj-Qwen3.5-4B-BF16.gguf";
 
     // ═══════════════════════════════════════════════════
     // 1. Model lifecycle
