@@ -83,6 +83,55 @@ public sealed class NativeInferenceModel : IInferenceModel
     internal IntPtr RawHandle => _handle.DangerousGetHandle();
     internal ModelConfig Config => _config;
 
+    public string ApplyChatTemplate(string? template, IReadOnlyList<(string role, string content)> messages, bool addAssistant = true)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        // Marshal messages to eci_chat_message_t struct array
+        // eci_chat_message_t is { const char* role; const char* content; } — blittable
+        var nMsg = messages.Count;
+        var msgSize = System.Runtime.InteropServices.Marshal.SizeOf<EciChatMessage>();
+        var msgPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(nMsg * msgSize);
+        try
+        {
+            var allocatedStrings = new List<IntPtr>();
+            try
+            {
+                for (int i = 0; i < nMsg; i++)
+                {
+                    var (role, content) = messages[i];
+                    var rolePtr = System.Runtime.InteropServices.Marshal.StringToHGlobalAnsi(role);
+                    var contentPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalAnsi(content);
+                    allocatedStrings.Add(rolePtr);
+                    allocatedStrings.Add(contentPtr);
+                    var msg = new EciChatMessage { Role = rolePtr, Content = contentPtr };
+                    System.Runtime.InteropServices.Marshal.StructureToPtr(msg, msgPtr + i * msgSize, false);
+                }
+
+                EciNative.ApplyChatTemplate(_handle.DangerousGetHandle(), template,
+                    msgPtr, nMsg, addAssistant, out var textPtr).ThrowIfError();
+                try
+                {
+                    return System.Runtime.InteropServices.Marshal.PtrToStringAnsi(textPtr) ?? string.Empty;
+                }
+                finally { EciNative.FreeString(textPtr); }
+            }
+            finally
+            {
+                foreach (var p in allocatedStrings) System.Runtime.InteropServices.Marshal.FreeHGlobal(p);
+            }
+        }
+        finally
+        {
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(msgPtr);
+        }
+    }
+
+    public IGrammar CreateGrammar(string grammarStr, string grammarRoot)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return NativeGrammar.Create(this, grammarStr, grammarRoot);
+    }
+
     public void Dispose()
     {
         if (_disposed) return;

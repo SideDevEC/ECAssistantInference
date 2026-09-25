@@ -1088,6 +1088,255 @@ int eci_check_anti_prompts(const char* text, const char** anti_prompts, int coun
     return -1;
 }
 
+// ── Grammar (GBNF) ──
+
+struct eci_grammar_s {
+    llama_sampler* sampler = nullptr;
+};
+
+eci_grammar_t* eci_grammar_create(eci_model_t* model, const char* grammar_str, const char* grammar_root) {
+    if (!model || !model->vocab || !grammar_str || !grammar_root) return nullptr;
+    auto* g = new eci_grammar_s();
+    g->sampler = llama_sampler_init_grammar(model->vocab, grammar_str, grammar_root);
+    if (!g->sampler) {
+        delete g;
+        return nullptr;
+    }
+    return g;
+}
+
+void eci_grammar_free(eci_grammar_t* grammar) {
+    if (!grammar) return;
+    if (grammar->sampler) llama_sampler_free(grammar->sampler);
+    delete grammar;
+}
+
+// Helper: sample with optional grammar sampler chained
+static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* vocab,
+                                       const eci_sampling_params_t* params,
+                                       const std::vector<llama_token>& recent_tokens,
+                                       int last_batch_idx,
+                                       llama_sampler* grammar_sampler) {
+    if (!params || last_batch_idx < 0) return -1;
+
+    int n_vocab = llama_vocab_n_tokens(vocab);
+
+    // Build the sampler chain
+    llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
+
+    // Penalties (repeat + present)
+    if (params->repeat_penalty != 1.0f || params->penalty_present > 0.0f) {
+        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
+        if (pen_last_n > 0 && !recent_tokens.empty()) {
+            llama_sampler_chain_add(smpl, llama_sampler_init_penalties(
+                n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present));
+        }
+    }
+
+    // Grammar (if provided) — filters valid tokens before temperature
+    if (grammar_sampler) {
+        llama_sampler_chain_add(smpl, grammar_sampler);
+    }
+
+    // Temperature / selection
+    if (params->temperature <= 0) {
+        llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
+    } else {
+        llama_sampler_chain_add(smpl, llama_sampler_init_temp(params->temperature));
+        if (params->top_k > 0)
+            llama_sampler_chain_add(smpl, llama_sampler_init_top_k(params->top_k));
+        if (params->top_p < 1.0f)
+            llama_sampler_chain_add(smpl, llama_sampler_init_top_p(params->top_p, 1));
+        if (params->min_p > 0.0f)
+            llama_sampler_chain_add(smpl, llama_sampler_init_min_p(params->min_p, 1));
+    }
+
+    // Sample using the llama.cpp sampler API (takes context + idx)
+    llama_token token = llama_sampler_sample(smpl, ctx, last_batch_idx);
+
+    // If ignoring EOS, resample
+    if (params->ignore_eos && llama_vocab_is_eog(vocab, token)) {
+        llama_sampler_accept(smpl, token);
+        token = llama_sampler_sample(smpl, ctx, last_batch_idx);
+    }
+
+    llama_sampler_accept(smpl, token);
+    llama_sampler_free(smpl);
+    return token;
+}
+
+eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_sampling_params_t* params,
+                                             eci_grammar_t* grammar, int* out_token) {
+    if (!exec || !params || !out_token) return ECI_ERR_INVALID_ARG;
+    if (exec->n_tokens == 0 || exec->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
+
+    std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
+    llama_sampler* gs = grammar ? grammar->sampler : nullptr;
+    int32_t token = do_sample_with_grammar(exec->ctx_ref->ctx, exec->ctx_ref->vocab,
+                                            params, exec->recent_tokens, exec->last_batch_idx, gs);
+    if (token < 0) return ECI_ERR_DECODE_FAILED;
+    *out_token = token;
+    return ECI_OK;
+}
+
+eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci_sampling_params_t* params,
+                                                eci_grammar_t* grammar, int* out_token) {
+    if (!conv || !params || !out_token) return ECI_ERR_INVALID_ARG;
+    if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
+
+    // Note: no lock here — C# layer ensures only one thread samples per context at a time
+    llama_sampler* gs = grammar ? grammar->sampler : nullptr;
+    // Note: repeat penalty not applied per-conversation in batch mode
+    int32_t token = do_sample_with_grammar(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
+                                            params, {}, conv->last_batch_idx, gs);
+    if (token < 0) return ECI_ERR_DECODE_FAILED;
+    *out_token = token;
+    return ECI_OK;
+}
+
+// ── Chat template ──
+
+eci_result_t eci_apply_chat_template(eci_model_t* model, const char* tmpl,
+                                        const eci_chat_message_t* messages, int n_messages,
+                                        bool add_assistant,
+                                        char** out_text) {
+    if (!model || !messages || n_messages <= 0 || !out_text) return ECI_ERR_INVALID_ARG;
+
+    // Convert to llama_chat_message array
+    std::vector<llama_chat_message> chat(n_messages);
+    for (int i = 0; i < n_messages; i++) {
+        chat[i].role = messages[i].role;
+        chat[i].content = messages[i].content;
+    }
+
+    // First call to get the required size
+    int32_t needed = llama_chat_apply_template(tmpl, chat.data(), n_messages, add_assistant, nullptr, 0);
+    if (needed <= 0) {
+        model->last_error = "chat template apply failed";
+        return ECI_ERR_INTERNAL;
+    }
+
+    // Allocate and apply
+    // Add some slack — llama_chat_apply_template can sometimes need more than reported
+    int32_t buf_size = needed + 256;
+    char* buf = (char*)malloc(buf_size);
+    if (!buf) return ECI_ERR_INTERNAL;
+
+    int32_t written = llama_chat_apply_template(tmpl, chat.data(), n_messages, add_assistant, buf, buf_size);
+    if (written <= 0) {
+        free(buf);
+        model->last_error = "chat template apply failed on second call";
+        return ECI_ERR_INTERNAL;
+    }
+
+    *out_text = buf;
+    return ECI_OK;
+}
+
+// ── Vision on standard executor ──
+
+eci_result_t eci_executor_prompt_with_images(eci_executor_t* exec,
+                                                 eci_model_t* model,
+                                                 const char* text,
+                                                 const char** image_data,
+                                                 const int* image_sizes,
+                                                 int n_images) {
+    if (!exec || !model || !text) return ECI_ERR_INVALID_ARG;
+    if (!model->mtmd_ctx) {
+        model->last_error = "No mmproj loaded — cannot process images";
+        return ECI_ERR_INVALID_ARG;
+    }
+    if (n_images > 0 && (!image_data || !image_sizes)) return ECI_ERR_INVALID_ARG;
+
+    mtmd_context* mctx = model->mtmd_ctx;
+
+    // Step 1: Load all images as bitmaps
+    std::vector<mtmd_bitmap*> bitmaps;
+    for (int i = 0; i < n_images; i++) {
+        auto wrapper = mtmd_helper_bitmap_init_from_buf(
+            mctx, (const unsigned char*)image_data[i], image_sizes[i], false, mtmd_helper_init_opt_default());
+        if (!wrapper.bitmap) {
+            for (auto* b : bitmaps) mtmd_bitmap_free(b);
+            return ECI_ERR_INTERNAL;
+        }
+        bitmaps.push_back(wrapper.bitmap);
+    }
+
+    // Step 2: Tokenize prompt + images into chunks
+    mtmd_input_text input_text = {};
+    input_text.text = text;
+    input_text.text_len = strlen(text);
+    input_text.add_special = false;
+    input_text.parse_special = false;
+
+    mtmd_input_chunks* chunks = mtmd_input_chunks_init();
+    int32_t rc = mtmd_tokenize(mctx, chunks, &input_text,
+                               bitmaps.data(), bitmaps.size());
+
+    for (auto* b : bitmaps) mtmd_bitmap_free(b);
+
+    if (rc != 0) {
+        mtmd_input_chunks_free(chunks);
+        return ECI_ERR_INTERNAL;
+    }
+
+    // Step 3: Process chunks — text → pending tokens, images → embd decode
+    std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
+
+    size_t n_chunks = mtmd_input_chunks_size(chunks);
+    for (size_t i = 0; i < n_chunks; i++) {
+        const mtmd_input_chunk* chunk = mtmd_input_chunks_get(chunks, i);
+        auto chunk_type = mtmd_input_chunk_get_type(chunk);
+
+        if (chunk_type == MTMD_INPUT_CHUNK_TYPE_TEXT) {
+            size_t n_tokens = 0;
+            const llama_token* tokens = mtmd_input_chunk_get_tokens_text(chunk, &n_tokens);
+            if (tokens && n_tokens > 0) {
+                exec->pending_tokens.insert(exec->pending_tokens.end(), tokens, tokens + n_tokens);
+                exec->has_pending = true;
+            }
+        } else if (chunk_type == MTMD_INPUT_CHUNK_TYPE_IMAGE) {
+            // Flush pending text tokens first (separate decode batch)
+            if (exec->has_pending) {
+                int n = (int)exec->pending_tokens.size();
+                llama_batch batch = llama_batch_init(n, 0, exec->ctx_ref->n_seq_max);
+                for (int j = 0; j < n; j++) {
+                    batch.token[j] = exec->pending_tokens[j];
+                    batch.pos[j] = exec->n_kv_pos + j;
+                    batch.n_seq_id[j] = 1;
+                    batch.seq_id[j][0] = 0;
+                    batch.logits[j] = 0;
+                }
+                batch.n_tokens = n;
+                if (llama_decode(exec->ctx_ref->ctx, batch) == 0) {
+                    exec->n_tokens += n;
+                    exec->n_kv_pos += n;
+                    exec->last_batch_idx = n - 1;
+                }
+                llama_batch_free(batch);
+                exec->pending_tokens.clear();
+                exec->has_pending = false;
+            }
+
+            // Encode image with CLIP (non-causal attention)
+            llama_set_causal_attn(exec->ctx_ref->ctx, false);
+            mtmd_helper_eval_chunk_single(mctx, exec->ctx_ref->ctx, chunk,
+                                          exec->n_kv_pos, 0, 512, false, nullptr);
+            llama_set_causal_attn(exec->ctx_ref->ctx, true);
+
+            // Update position by the number of image tokens
+            const mtmd_image_tokens* img_tokens = mtmd_input_chunk_get_tokens_image(chunk);
+            int n_img_tokens = img_tokens ? mtmd_image_tokens_get_n_tokens(img_tokens) : 0;
+            exec->n_tokens += n_img_tokens;
+            exec->n_kv_pos += n_img_tokens;
+            exec->last_batch_idx = n_img_tokens - 1;
+        }
+    }
+
+    mtmd_input_chunks_free(chunks);
+    return ECI_OK;
+}
+
 // ── Last error ──
 
 const char* eci_last_error(eci_context_t* ctx) {

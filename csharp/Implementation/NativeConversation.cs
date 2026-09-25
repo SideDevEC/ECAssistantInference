@@ -51,6 +51,16 @@ public sealed class NativeConversation : IConversation
         return token;
     }
 
+    public int SampleWithGrammar(SamplingConfig? config, IGrammar grammar)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        var cfg = config ?? new SamplingConfig();
+        var nativeParams = NativeStandardExecutor.ToNativeSampling(cfg);
+        var nativeGrammar = (NativeGrammar)grammar;
+        EciNative.ConversationSampleGrammar(_handle, in nativeParams, nativeGrammar.RawHandle, out var token).ThrowIfError();
+        return token;
+    }
+
     public void Rewind(int tokenCount)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);

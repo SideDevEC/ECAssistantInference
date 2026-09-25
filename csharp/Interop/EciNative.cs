@@ -270,4 +270,31 @@ internal static class EciNative
 
     [DllImport(Lib, EntryPoint = "eci_kv_flush", CallingConvention = CallingConvention.Cdecl)]
     public static extern EciResult KvFlush(IntPtr context, int seqId);
+
+    // ── Grammar (GBNF) ──
+
+    [DllImport(Lib, EntryPoint = "eci_grammar_create", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern IntPtr GrammarCreate(IntPtr model, [MarshalAs(UnmanagedType.LPStr)] string grammarStr, [MarshalAs(UnmanagedType.LPStr)] string grammarRoot);
+
+    [DllImport(Lib, EntryPoint = "eci_grammar_free", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void GrammarFree(IntPtr grammar);
+
+    [DllImport(Lib, EntryPoint = "eci_executor_sample_grammar", CallingConvention = CallingConvention.Cdecl)]
+    public static extern EciResult ExecutorSampleGrammar(IntPtr executor, in EciSamplingParams parameters, IntPtr grammar, out int token);
+
+    [DllImport(Lib, EntryPoint = "eci_conversation_sample_grammar", CallingConvention = CallingConvention.Cdecl)]
+    public static extern EciResult ConversationSampleGrammar(IntPtr conversation, in EciSamplingParams parameters, IntPtr grammar, out int token);
+
+    // ── Chat template ──
+
+    [DllImport(Lib, EntryPoint = "eci_apply_chat_template", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern EciResult ApplyChatTemplate(IntPtr model, [MarshalAs(UnmanagedType.LPStr)] string? tmpl,
+        IntPtr messages, int nMessages, [MarshalAs(UnmanagedType.U1)] bool addAssistant, out IntPtr outText);
+
+    // ── Vision on standard executor ──
+
+    [DllImport(Lib, EntryPoint = "eci_executor_prompt_with_images", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern EciResult ExecutorPromptWithImages(IntPtr executor, IntPtr model,
+        [MarshalAs(UnmanagedType.LPStr)] string text,
+        IntPtr[] imageData, int[] imageSizes, int nImages);
 }

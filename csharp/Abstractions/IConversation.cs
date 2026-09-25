@@ -8,6 +8,7 @@ public interface IConversation : IDisposable
     void Prompt(string text);
     void PromptTokens(int[] tokens);
     int Sample(SamplingConfig? config = null);
+    int SampleWithGrammar(SamplingConfig? config, IGrammar grammar);
     void Rewind(int tokenCount);
     void Reset();
     void ShiftLeft(int tokenCount);

@@ -284,6 +284,64 @@ bool eci_mtmd_needs_non_causal(eci_model_t* mmproj);
 int eci_check_anti_prompts(const char* text, const char** anti_prompts, int count);
 
 /* ════════════════════════════════════════════════════
+ *  Grammar (GBNF)
+ * ════════════════════════════════════════════════════ */
+
+/* Opaque grammar handle. */
+typedef struct eci_grammar_s eci_grammar_t;
+
+/* Create a GBNF grammar sampler. Returns null if parsing fails.
+ * The grammar is applied during sampling — only tokens matching the
+ * grammar are selected. Pass null to eci_*_sample_with_grammar to
+ * sample without grammar constraint.
+ * The grammar must be created from the same model's vocab. */
+eci_grammar_t* eci_grammar_create(eci_model_t* model, const char* grammar_str, const char* grammar_root);
+
+/* Free a grammar. */
+void eci_grammar_free(eci_grammar_t* grammar);
+
+/* Sample with grammar constraint. Like eci_executor_sample / eci_conversation_sample
+ * but applies the grammar sampler before token selection. */
+eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_sampling_params_t* params,
+                                             eci_grammar_t* grammar, int* out_token);
+eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci_sampling_params_t* params,
+                                                eci_grammar_t* grammar, int* out_token);
+
+/* ════════════════════════════════════════════════════
+ *  Chat template
+ * ════════════════════════════════════════════════════ */
+
+/* Apply the model's built-in chat template to a list of messages.
+ * Uses llama_chat_apply_template (supports Qwen, Llama, ChatML, etc.).
+ * Pass tmpl=null to use the model's default template.
+ * messages: array of {role, content} pairs.
+ * add_assistant: append the assistant turn marker.
+ * out_text: receives the formatted prompt (caller frees with eci_free_string).
+ * Returns ECI_OK or error. */
+typedef struct { const char* role; const char* content; } eci_chat_message_t;
+
+eci_result_t eci_apply_chat_template(eci_model_t* model, const char* tmpl,
+                                        const eci_chat_message_t* messages, int n_messages,
+                                        bool add_assistant,
+                                        char** out_text);
+
+/* ════════════════════════════════════════════════════
+ *  Vision on standard executor
+ * ════════════════════════════════════════════════════ */
+
+/* Prompt the standard executor with text + images.
+ * Like eci_executor_prompt but processes image markers via the mmproj projector.
+ * The executor uses seq_id 0 — images are encoded and decoded with non-causal attention.
+ * Must be called with no pending tokens (flush before vision prompt).
+ * After this call, call eci_executor_infer as normal. */
+eci_result_t eci_executor_prompt_with_images(eci_executor_t* exec,
+                                                 eci_model_t* model,
+                                                 const char* text,
+                                                 const char** image_data_ptrs,
+                                                 const int* image_sizes,
+                                                 int n_images);
+
+/* ════════════════════════════════════════════════════
  *  Logging / errors
  * ════════════════════════════════════════════════════ */
 
