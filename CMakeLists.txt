@@ -43,6 +43,11 @@ add_library(ecainference SHARED
     src/eci_backend.cpp
 )
 
+# Windows: export all symbols automatically (no __declspec needed in C API)
+set_target_properties(ecainference PROPERTIES
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON
+)
+
 target_include_directories(ecainference
     PRIVATE
         ${CMAKE_SOURCE_DIR}/include

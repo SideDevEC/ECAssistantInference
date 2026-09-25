@@ -13,7 +13,6 @@ jobs:
   # ── macOS Metal (build + tests) ──
   native-macos-metal:
     runs-on: macos-14
-    continue-on-error: true # Stress tests flaky on CI runners — non-blocking
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,11 +30,11 @@ jobs:
         run: |
           mkdir -p models
           # Small embedding model (~30MB)
-          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+          curl -L --retry 3 -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
           # Small LLM for inference tests (~400MB)
-          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
-            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
+          curl -L --retry 3 -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf"
 
       - name: Tests (basic)
         env:
@@ -62,7 +61,6 @@ jobs:
   # ── Linux CPU (build + tests) ──
   native-linux-cpu:
     runs-on: ubuntu-22.04
-    continue-on-error: true # Stress tests flaky on CI runners — non-blocking
     steps:
       - uses: actions/checkout@v4
         with:
@@ -81,10 +79,10 @@ jobs:
       - name: Download test models
         run: |
           mkdir -p models
-          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+          curl -L --retry 3 -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
-            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
+          curl -L --retry 3 -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf"
 
       - name: Tests (basic)
         env:
@@ -111,7 +109,6 @@ jobs:
   # ── Windows CPU (build + tests) ──
   native-windows-cpu:
     runs-on: windows-2022
-    continue-on-error: true # Windows CPU build needs fixing — non-blocking
     steps:
       - uses: actions/checkout@v4
         with:
@@ -128,10 +125,10 @@ jobs:
       - name: Download test models
         run: |
           mkdir -p models
-          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf `
+          curl -L --retry 3 -o models/all-MiniLM-L6-v2-Q5_K_M.gguf `
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf `
-            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
+          curl -L --retry 3 -o models/SmolLM2-135M-Q4_K_M.gguf `
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf"
 
       - name: Tests (basic)
         env:
@@ -181,10 +178,10 @@ jobs:
       - name: Download test models
         run: |
           mkdir -p models
-          curl -L -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
+          curl -L --retry 3 -o models/all-MiniLM-L6-v2-Q5_K_M.gguf \
             "https://huggingface.co/leliuga/all-MiniLM-L6-v2-GGUF/resolve/main/all-MiniLM-L6-v2-Q5_K_M.gguf"
-          curl -L -o models/SmolLM2-135M-Q4_K_M.gguf \
-            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf" || true
+          curl -L --retry 3 -o models/SmolLM2-135M-Q4_K_M.gguf \
+            "https://huggingface.co/QuantFactory/SmolLM2-135M-GGUF/resolve/main/SmolLM2-135M.Q4_K_M.gguf"
 
       - name: Build C#
         run: |
