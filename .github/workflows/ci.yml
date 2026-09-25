@@ -131,7 +131,7 @@ jobs:
 
   # ── NuGet pack (NO publish — ships in v15 train) ──
   nuget-pack:
-    needs: [native-macos-metal, native-linux-cpu, native-windows-cpu]
+    needs: [native-macos-metal, native-linux-cpu, native-windows-cpu, native-linux-vulkan, native-linux-cuda, native-windows-vulkan, native-windows-cuda]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -148,12 +148,21 @@ jobs:
 
       - name: Prepare runtimes
         run: |
+          # macOS Metal
           mkdir -p csharp/runtimes/osx-arm64/native
+          cp native-libs/libecainference-osx-arm64-metal/libecainference.dylib csharp/runtimes/osx-arm64/native/ || true
+          # Linux CPU
           mkdir -p csharp/runtimes/linux-x64/native
+          cp native-libs/libecainference-linux-x64-cpu/libecainference.so csharp/runtimes/linux-x64/native/ || true
+          # Windows CPU
           mkdir -p csharp/runtimes/win-x64/native
-          cp native-libs/libecainference-osx-arm64-metal/libecainference.dylib csharp/runtimes/osx-arm64/native/
-          cp native-libs/libecainference-linux-x64-cpu/libecainference.so csharp/runtimes/linux-x64/native/
-          cp native-libs/libecainference-win-x64-cpu/ecainference.dll csharp/runtimes/win-x64/native/
+          cp native-libs/libecainference-win-x64-cpu/ecainference.dll csharp/runtimes/win-x64/native/ || true
+          # Linux Vulkan (optional — same RID, different build)
+          # Linux CUDA (optional — same RID, different build)
+          # Windows Vulkan (optional)
+          cp native-libs/libecainference-win-x64-vulkan/ecainference.dll csharp/runtimes/win-x64-vulkan/native/ 2>/dev/null || true
+          # Windows CUDA (optional)
+          cp native-libs/libecainference-win-x64-cuda/ecainference.dll csharp/runtimes/win-x64-cuda/native/ 2>/dev/null || true
 
       - name: Pack NuGet
         run: |
@@ -166,7 +175,7 @@ jobs:
           name: nuget-package
           path: nupkg/*.nupkg
 
-  # ── Vulkan build (Linux) — no tests, just compilation check ──
+  # ── Vulkan build (Linux) — compile check ──
   native-linux-vulkan:
     runs-on: ubuntu-22.04
     steps:
@@ -184,7 +193,14 @@ jobs:
           cmake -B build-vulkan -DECI_BACKEND_VULKAN=ON -DCMAKE_BUILD_TYPE=Release
           cmake --build build-vulkan -j$(nproc) || true  # may fail on CI without GPU
 
-  # ── CUDA build (Linux) — compilation only, no GPU on CI ──
+      - name: Upload so
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-linux-x64-vulkan
+          path: build-vulkan/libecainference.so
+
+  # ── CUDA build (Linux) — compile check ──
   native-linux-cuda:
     runs-on: ubuntu-22.04
     steps:
@@ -206,3 +222,67 @@ jobs:
         run: |
           cmake -B build-cuda -DECI_BACKEND_CUDA=ON -DCMAKE_BUILD_TYPE=Release
           cmake --build build-cuda -j$(nproc) || true  # may fail without GPU drivers
+
+      - name: Upload so
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-linux-x64-cuda
+          path: build-cuda/libecainference.so
+
+  # ── Vulkan build (Windows) — compile check ──
+  native-windows-vulkan:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.2
+        with:
+          version: 1.3.283.0
+          cache: true
+
+      - name: Install cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Build (Vulkan)
+        run: |
+          cmake -B build-vulkan -DECI_BACKEND_VULKAN=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-vulkan --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Upload dll
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-win-x64-vulkan
+          path: build-vulkan/Release/ecainference.dll
+
+  # ── CUDA build (Windows) — compile check ──
+  native-windows-cuda:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install CUDA toolkit
+        uses: Jimver/cuda-toolkit@v0.2.21
+        with:
+          cuda: '12.4.0'
+
+      - name: Install cmake
+        uses: lukka/get-cmake@latest
+
+      - name: Build (CUDA)
+        run: |
+          cmake -B build-cuda -DECI_BACKEND_CUDA=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-cuda --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Upload dll
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: libecainference-win-x64-cuda
+          path: build-cuda/Release/ecainference.dll
