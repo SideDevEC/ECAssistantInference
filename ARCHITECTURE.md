@@ -24,7 +24,7 @@
 
 ## C API (ecainference.h)
 
-Flat C API — 60+ functions. Opaque handles for model, context, pool, conversation, executor, state.
+Flat C API — 70+ functions. Opaque handles for model, context, pool, conversation, executor, state, grammar.
 
 ### Key types
 - `eci_model_t` — loaded GGUF model
@@ -33,6 +33,21 @@ Flat C API — 60+ functions. Opaque handles for model, context, pool, conversat
 - `eci_conversation_t` — leased conversation (seq_id + KV slice)
 - `eci_executor_t` — standard (non-batched) executor
 - `eci_state_t` — saved KV state for rewind
+- `eci_grammar_t` — GBNF grammar sampler (llama_sampler_init_grammar)
+
+### Grammar (GBNF)
+- `eci_grammar_create(model, grammar_str, grammar_root)` — creates grammar sampler
+- `eci_executor_sample_grammar` / `eci_conversation_sample_grammar` — sample with grammar constraint
+- C# exposes `IGrammar` + `NativeGrammar` + `SampleWithGrammar()` on both executor and conversation
+
+### Chat template
+- `eci_apply_chat_template(model, tmpl, messages, n_msg, add_assistant, out_text)` — wraps `llama_chat_apply_template`
+- Pass tmpl=null for model's default template (Qwen, Llama, ChatML, etc.)
+- C# exposes `IInferenceModel.ApplyChatTemplate()`
+
+### Vision on standard executor
+- `eci_executor_prompt_with_images(exec, model, text, images, sizes, n_images)` — uses `mtmd_tokenize` + `mtmd_helper_eval_chunk_single`
+- C# exposes `IStandardExecutor.PromptWithImages()`
 
 ### Thread safety
 - Internal `std::mutex` on every `llama_*` call (serialized)
@@ -78,7 +93,7 @@ Caller drives ALL config. Safety layer only intervenes on probe failure:
 ## Test Coverage
 
 ### C++ (43 tests)
-- 14 basic: model, context, tokenize, pool, single/batched inference, state, embeddings, vision, shift_left, kv_copy, causal_attn
+- 14 basic: model, context, tokenize, pool, single/batched inference, state, embeddings, vision, shift_left, kv_copy, causal_attn, grammar, chat template
 - 29 stress: NULL args, empty inputs, pool exhaustion, double-return, KV boundaries, sampling extremes, state save/restore edge cases, repeated generation, model reload
 
 ### C# (51 tests)
@@ -110,9 +125,9 @@ Caller drives ALL config. Safety layer only intervenes on probe failure:
 - ✅ tests/test_basic.cpp — 14 basic tests
 - ✅ tests/test_stress.cpp — 29 stress tests
 - ✅ docs/CAPABILITY.md — capability matrix
-- ✅ csharp/ — C# bindings (41 files, 51 tests)
+- ✅ csharp/ — C# bindings (45 files, 51 tests, LDC PASSED 23 types/10 edges)
 - ✅ CMakeLists.txt — build system
 - ✅ .github/workflows/ci.yml — CI (build + test, no publish)
 
-**Status:** 43/43 C++ tests + 51/51 C# tests passing on macOS Metal.
-**Added:** 2026-09-25
+**Status:** 43/43 C++ tests + 51/51 C# tests passing on macOS Metal. LDC PASSED.
+**Updated:** 2026-09-25 — added grammar, chat template, executor vision APIs
