@@ -13,10 +13,20 @@
 #include <cstdio>
 #include <random>
 #include <vector>
+#include <atomic>
+#include <chrono>
 
 // ── Logging globals (2026-09-25) — defined here so ECI_LOG macro works everywhere ──
 static eci_log_callback_t g_log_cb = nullptr;
 static eci_log_level_t g_log_min_level = ECI_LOG_NONE;
+
+// ── Grammar tier diagnostics (benchmark investigation 2026-09-26) ──
+// Counters for rejection-sampling tier hits in do_sample_with_grammar.
+static std::atomic<int> g_tier1_hits{0};
+static std::atomic<int> g_tier2_hits{0};
+static std::atomic<int> g_tier2b_hits{0};
+static std::atomic<int> g_tier3_hits{0};
+static std::atomic<uint64_t> g_tier3_ns{0};
 
 // Forward declaration of the log implementation (defined at end of file).
 extern "C" void eci_log(eci_log_level_t level, const char* tag, const char* fmt, ...);
@@ -1445,6 +1455,7 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
         llama_token_data_array single_arr = { &single, 1, -1, false };
         llama_sampler_apply(grammar_state->chain, &single_arr);
         if (single.logit != -INFINITY) {
+            g_tier1_hits++;
             llama_sampler_free(smpl);
             grammar_accept(token);
             return token;
@@ -1458,21 +1469,60 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
                 if (kept.data[i].logit == -INFINITY) continue;
                 // ignore_eos: never return EOG through the fallback tiers.
                 if (params->ignore_eos && llama_vocab_is_eog(vocab, t)) continue;
+                g_tier2_hits++;
                 llama_sampler_free(smpl);
                 grammar_accept(t);
                 return t;
             }
         }
 
+        // Tier 2.5: rescue net — grammar-mask a top-256 slice (raw-logit order,
+        // NO top_p truncation), take the highest-logit survivor. Tier 2's `kept`
+        // set is top_p-trimmed after top_k; with sharp distributions it holds
+        // only a handful of tokens, so when the model fixates on an invalid
+        // token (e.g. '+' outside the grammar charset) the whole set is invalid
+        // and we would pay tier 3 (~12ms full-vocab mask). nth_element over the
+        // thread-local candidates + a 256-candidate mask ≈ 0.5ms.
+        {
+            const size_t wide_k = std::min<size_t>(256, (size_t)n_vocab);
+            llama_token_data_array wide;
+            llama_token_data* wcur = t_candidates((size_t)n_vocab, wide);
+            for (int i = 0; i < n_vocab; i++) wcur[i].logit = logits[i];
+            std::nth_element(wcur, wcur + wide_k, wcur + n_vocab,
+                [](const llama_token_data& a, const llama_token_data& b) { return a.logit > b.logit; });
+            llama_token_data_array wide_arr = { wcur, wide_k, -1, false };
+            llama_sampler_apply(grammar_state->chain, &wide_arr);
+            llama_token best = -1; float best_logit = -INFINITY;
+            for (size_t i = 0; i < wide_k; i++) {
+                if (wcur[i].logit == -INFINITY) continue;
+                if (params->ignore_eos && llama_vocab_is_eog(vocab, wcur[i].id)) continue;
+                if (wcur[i].logit > best_logit) { best_logit = wcur[i].logit; best = wcur[i].id; }
+            }
+            if (best >= 0) {
+                g_tier2b_hits++;
+                llama_sampler_free(smpl);
+                grammar_accept(best);
+                return best;
+            }
+        }
+
         // Tier 3: full grammar-first mask (strict grammars, e.g. JSON schemas).
-        for (int attempt = 0; attempt < 16; attempt++) {
+        {
+            auto t0 = std::chrono::steady_clock::now();
+            g_tier3_hits++;
+            int t1 = g_tier1_hits, t2 = g_tier2_hits;
+            fprintf(stderr, "[grammar-tiers] t1=%d t2=%d t2b=%d t3=%d\n", t1, t2, g_tier2b_hits.load(), g_tier3_hits.load());
+            for (int attempt = 0; attempt < 16; attempt++) {
             llama_token_data_array arr;
             llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
             for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
-            llama_sampler_apply(grammar_state->chain, &arr);
-            llama_sampler_apply(smpl, &arr);
-            token = arr.data[arr.selected].id;
-            if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
+                llama_sampler_apply(grammar_state->chain, &arr);
+                llama_sampler_apply(smpl, &arr);
+                token = arr.data[arr.selected].id;
+                if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
+            }
+            auto t1c = std::chrono::steady_clock::now();
+            g_tier3_ns += std::chrono::duration_cast<std::chrono::nanoseconds>(t1c - t0).count();
         }
         llama_sampler_free(smpl);
         grammar_accept(token);
