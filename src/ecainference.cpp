@@ -428,7 +428,11 @@ void eci_executor_free(eci_executor_t* exec) {
     // cleanup eci_pool_return does for pooled conversations.
     {
         std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
-        llama_memory_seq_rm(exec->ctx_ref->mem, 0, 0, -1);
+        if (exec->n_tokens > 0) {
+            llama_memory_seq_rm(exec->ctx_ref->mem, 0, 0, -1);
+            // Vulkan stale-cells fix (#26744): flush after clearing — same as eci_pool_return
+            if (eci_backend_needs_kv_flush()) eci_kv_flush(exec->ctx_ref, 0);
+        }
     }
     delete exec;
 }
