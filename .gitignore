@@ -31,3 +31,4 @@ CTestTestfile.cmake
 # Secrets
 *.key
 .env
+build-metal-rel/
