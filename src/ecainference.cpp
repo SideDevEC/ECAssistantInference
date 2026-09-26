@@ -301,7 +301,68 @@ static uint64_t params_fingerprint(const eci_sampling_params_t* p) {
     mix((uint32_t)p->top_k);
     tf.f = p->min_p;                  mix(tf.u);
     mix(p->ignore_eos ? 1u : 0u);
+    // Penalty params — REQUIRED for chain pooling: the penalties sampler is
+    // part of the pooled chain, so any penalty change must force a rebuild.
+    tf.f = p->repeat_penalty;        mix(tf.u);
+    tf.f = p->penalty_present;       mix(tf.u);
+    mix((uint32_t)p->repeat_last_n);
     return h;
+}
+
+// ── Pooled per-thread selection chain (2026-09-26, ARCHITECTURE pm6) ──
+// do_sample_with_grammar used to build + free a fresh chain per sample call
+// (~1-2ms; ×N per batched step). The chain depends ONLY on the sampling
+// params, so we pool one chain per thread, keyed by params_fingerprint.
+// Invariants (owner-approved):
+//   1. Fingerprint covers EVERY chain-affecting param (incl. penalties) —
+//      any mismatch → free + rebuild, never wrong params.
+//   2. NO llama_sampler_accept on the pooled chain — stateless w.r.t. accept,
+//      preserving today's token-selection semantics exactly.
+//      (GATED FUTURE OPTION, owner noted: feed recent_tokens via
+//      reset+replay to activate repeat/present penalties — deliberate
+//      behavior change, needs own LLM validation. See ARCHITECTURE pm6.)
+//   3. thread_local with destructor → freed at thread exit; rebuilt on
+//      mismatch. Nothing shared across threads, nothing to leak.
+struct pooled_chain {
+    llama_sampler* smpl = nullptr;
+    uint64_t fingerprint = 0;
+    ~pooled_chain() { if (smpl) llama_sampler_free(smpl); }
+};
+static thread_local pooled_chain t_pooled;
+
+// Build or fetch the per-thread selection chain for these params.
+static llama_sampler* pooled_selection_chain(const eci_sampling_params_t* params,
+                                             const std::vector<llama_token>& recent_tokens,
+                                             int n_vocab) {
+    const uint64_t fp = params_fingerprint(params);
+    if (t_pooled.smpl && t_pooled.fingerprint == fp) return t_pooled.smpl;
+
+    if (t_pooled.smpl) llama_sampler_free(t_pooled.smpl);
+    llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
+
+    if (params->repeat_penalty != 1.0f || params->penalty_present > 0.0f) {
+        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
+        if (pen_last_n > 0) {
+            llama_sampler_chain_add(smpl, llama_sampler_init_penalties(
+                n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present));
+        }
+    }
+    if (params->temperature <= 0) {
+        llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
+    } else {
+        llama_sampler_chain_add(smpl, llama_sampler_init_temp(params->temperature));
+        if (params->top_k > 0)
+            llama_sampler_chain_add(smpl, llama_sampler_init_top_k(params->top_k));
+        if (params->top_p < 1.0f)
+            llama_sampler_chain_add(smpl, llama_sampler_init_top_p(params->top_p, 1));
+        if (params->min_p > 0.0f)
+            llama_sampler_chain_add(smpl, llama_sampler_init_min_p(params->min_p, 1));
+        llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)t_rng()));
+    }
+
+    t_pooled.smpl = smpl;
+    t_pooled.fingerprint = fp;
+    return smpl;
 }
 
 // Snapshot a decoded logits row into `dest`. MUST be called immediately after
@@ -1378,35 +1439,12 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
 
     int n_vocab = llama_vocab_n_tokens(vocab);
 
-    // Per-call SELECTION chain — grammar is NOT in it. The grammar lives in
-    // the PERSISTENT chain (state advances via accept()) and is applied via
-    // rejection sampling: validate the selected token first, mask the top-k
-    // set second, full-vocab grammar-first only as the last resort (below).
-    llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
-
-    // Penalties (repeat + present)
-    if (params->repeat_penalty != 1.0f || params->penalty_present > 0.0f) {
-        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
-        if (pen_last_n > 0 && !recent_tokens.empty()) {
-            llama_sampler_chain_add(smpl, llama_sampler_init_penalties(
-                n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present));
-        }
-    }
-
-    // Temperature / selection
-    if (params->temperature <= 0) {
-        llama_sampler_chain_add(smpl, llama_sampler_init_greedy());
-    } else {
-        llama_sampler_chain_add(smpl, llama_sampler_init_temp(params->temperature));
-        if (params->top_k > 0)
-            llama_sampler_chain_add(smpl, llama_sampler_init_top_k(params->top_k));
-        if (params->top_p < 1.0f)
-            llama_sampler_chain_add(smpl, llama_sampler_init_top_p(params->top_p, 1));
-        if (params->min_p > 0.0f)
-            llama_sampler_chain_add(smpl, llama_sampler_init_min_p(params->min_p, 1));
-        // Distribution sampler for stochastic selection
-        llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)t_rng()));
-    }
+    // Pooled per-thread selection chain — grammar is NOT in it. The grammar
+    // lives in the PERSISTENT conversation/executor chain (state advances via
+    // accept()) and is applied via rejection sampling (tiers below). The chain
+    // is fetched/validated by fingerprint; NEVER freed per call (thread_local
+    // ownership, freed at thread exit or fingerprint change).
+    llama_sampler* smpl = pooled_selection_chain(params, recent_tokens, n_vocab);
 
     const float* logits = logits_raw;
 
@@ -1456,7 +1494,6 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
         llama_sampler_apply(grammar_state->chain, &single_arr);
         if (single.logit != -INFINITY) {
             g_tier1_hits++;
-            llama_sampler_free(smpl);
             grammar_accept(token);
             return token;
         }
@@ -1470,7 +1507,6 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
                 // ignore_eos: never return EOG through the fallback tiers.
                 if (params->ignore_eos && llama_vocab_is_eog(vocab, t)) continue;
                 g_tier2_hits++;
-                llama_sampler_free(smpl);
                 grammar_accept(t);
                 return t;
             }
@@ -1500,7 +1536,6 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
             }
             if (best >= 0) {
                 g_tier2b_hits++;
-                llama_sampler_free(smpl);
                 grammar_accept(best);
                 return best;
             }
@@ -1524,7 +1559,6 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
             auto t1c = std::chrono::steady_clock::now();
             g_tier3_ns += std::chrono::duration_cast<std::chrono::nanoseconds>(t1c - t0).count();
         }
-        llama_sampler_free(smpl);
         grammar_accept(token);
         return token;
     }
@@ -1540,7 +1574,6 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
         if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
     }
 
-    llama_sampler_free(smpl);
     return token;
 }
 
