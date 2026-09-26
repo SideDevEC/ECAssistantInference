@@ -1,11 +1,11 @@
 # API-INDEX.md — ECAssistantInference
 
-Generated: 2026-09-26T17:26:48.582352+00:00
+Generated: 2026-09-26T17:47:24.439313+00:00
 Packages: 2  |  Types: 24
 
 ---
 
-## csharp (23 types, ~1850 LOC)
+## csharp (23 types, ~1854 LOC)
 
 - 🔵 IConversation : IDisposable  (csharp)
 - 🔵 IConversationPool : IDisposable  (csharp)

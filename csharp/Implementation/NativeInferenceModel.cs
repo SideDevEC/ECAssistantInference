@@ -40,7 +40,7 @@ public sealed class NativeInferenceModel : IInferenceModel
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         var nativeParams = new EciContextParams(config.ContextSize, config.BatchSize,
-            config.SeqMax, (EciPoolingType)config.PoolingType);
+            config.SeqMax, (EciPoolingType)config.PoolingType, config.FusedGdn);
         EciNative.CreateContext(_handle.DangerousGetHandle(), in nativeParams, out var raw).ThrowIfError();
         var ctxHandle = new ContextSafeHandle();
         ctxHandle.SetHandleSafe(raw);
