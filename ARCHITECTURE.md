@@ -1,6 +1,9 @@
 # ECAssistantInference — Architecture
 
-**Summary:** C/C++ inference engine linking llama.cpp directly, with C# P/Invoke bindings. Replaces LLamaSharp.
+**Summary:** C/C++ inference engine linking llama.cpp directly, with C# P-Invoke bindings. Replaces LLamaSharp.
+
+**Addendum 2026-09-26 pm8 (Vulkan executor flush + deterministic auto penalty window):** (1) `eci_executor_free` now mirrors `eci_pool_return`'s Vulkan stale-cells flush (#26744): `seq_rm` then `eci_kv_flush(ctx, 0)` when `eci_backend_needs_kv_flush()`, guarded by `n_tokens > 0` — no-op on Metal/CUDA. (2) `repeat_last_n = -1` (auto, the C# default the LLM used to send) previously sized the pooled penalties ring from `recent_tokens.size()` at BUILD time — a thread-dependent window. Auto now means the constant **64** (llama-server parity), identical between ring build and per-call replay. Explicit `repeat_last_n` values pass through unchanged. The LLM exposes this as a `"repeat_last_n"` inference-config knob (default 64). Smoke 51/51 with all of the above.
+
 
 **Addendum 2026-09-26 pm7 (penalties ACTIVATED — owner-approved behavior change):** The pooled penalties ring is now fed per sample call via targeted reset+replay of the caller's `recent_tokens` window (`llama_sampler_reset(t_pooled.pen)` + accepts). Session-wide rolling semantics (window = conversation recent_tokens tail, capped by repeat_last_n). CRITICAL invariant: reset ONLY the penalties sampler — chain reset would reseed the dist RNG to its creation seed (llama_sampler_dist_reset re-seeds) and corrupt the draw sequence. Penalties off (repeat_penalty==1 and penalty_present==0) => pen==nullptr => zero work, zero change. Conversation-correct under batched interleaving by construction (ring rebuilt from the caller's window every call). Measured: sequential 88 vs 89.3 tok/s (~1% cost), all conformance checks pass, outputs verified changed (penalties bite). repeat_penalty/penalty_present config knobs are NOW LIVE in ECAssistantLLM — output distribution shifts deliberately (less repetition). LLM-side full validation (tool-call suites, journeys) recommended as follow-up.
 

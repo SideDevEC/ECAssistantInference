@@ -1,10 +1,11 @@
 # csharp.API.md
 
-Types: 22  |  LOC: 1815  |  ~1499 tokens
+Types: 23  |  LOC: 1850  |  ~1570 tokens
 
 ---
 
 ### Interface: IConversation
+> Resets grammar sampler state — call once per generation before a grammar-constrained sample loop.
 Implements: IDisposable
 Properties:
   - int TokenCount { get; set; }
@@ -15,6 +16,7 @@ Methods:
   - int SampleWithGrammar(SamplingConfig? config, IGrammar grammar)
   - void Rewind(int tokenCount)
   - void Reset()
+  - void ResetGrammarState()
   - void ShiftLeft(int tokenCount)
   - IConversationState SaveState()
   - void RestoreState(IConversationPool pool, IConversationState state)
@@ -142,6 +144,10 @@ Cross-package deps: ECAssistantInference.Abstractions, ECAssistantInference.Exce
 > Wraps an executor state (eci_state_t from eci_state_save).
 Implements: IInferenceState
 Cross-package deps: ECAssistantInference.Abstractions, ECAssistantInference.Exceptions, ECAssistantInference.Interop, ECAssistantInference.SafeHandles
+
+### Class: NativeLogBridge
+> Bridges native C-level logging (eci_set_log_callback) to a managed callback.
+Cross-package deps: ECAssistantInference.Interop
 
 ### Class: NativeStandardExecutor
 Implements: IStandardExecutor
