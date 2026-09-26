@@ -343,7 +343,11 @@ static llama_sampler* pooled_selection_chain(const eci_sampling_params_t* params
     llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
     if (params->repeat_penalty != 1.0f || params->penalty_present > 0.0f) {
-        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
+        // Auto window (-1): FIXED constant (llama-server parity) — NOT
+        // recent_tokens.size(). The chain is pooled/thread-persistent; sizing
+        // the ring from build-time recent_tokens.size() would make the penalty
+        // window depend on whichever request first touched this thread.
+        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : 64;
         if (pen_last_n > 0) {
             llama_sampler* pen = llama_sampler_init_penalties(
                 n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present);
@@ -1464,7 +1468,9 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
     // sequence. Penalties off (pen == nullptr) → zero work, zero change.
     if (t_pooled.pen) {
         llama_sampler_reset(t_pooled.pen);
-        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
+        // Auto window: same FIXED constant as the chain build (64) — must match
+        // the ring size or the window would drift between build and replay.
+        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : 64;
         if (pen_last_n > (int)recent_tokens.size()) pen_last_n = (int)recent_tokens.size();
         for (int i = (int)recent_tokens.size() - pen_last_n; i < (int)recent_tokens.size(); i++)
             llama_sampler_accept(t_pooled.pen, recent_tokens[i]);
