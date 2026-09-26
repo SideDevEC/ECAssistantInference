@@ -1,11 +1,11 @@
 # API-INDEX.md — csharp
 
-Generated: 2026-09-25T14:11:33.578558+00:00
-Packages: 2  |  Types: 23
+Generated: 2026-09-26T10:50:02.403226+00:00
+Packages: 2  |  Types: 24
 
 ---
 
-## csharp (22 types, ~1815 LOC)
+## csharp (23 types, ~1850 LOC)
 
 - 🔵 IConversation : IDisposable  (csharp)
 - 🔵 IConversationPool : IDisposable  (csharp)
@@ -26,6 +26,7 @@ Packages: 2  |  Types: 23
 - 🟡 NativeInferenceContext : IInferenceContext  (csharp)
 - 🟡 NativeInferenceModel : IInferenceModel  (csharp)
 - 🟡 NativeInferenceState : IInferenceState  (csharp)
+- 🟡 NativeLogBridge  (csharp)
 - 🟡 NativeStandardExecutor : IStandardExecutor  (csharp)
 - 🟡 NativeVisionEncoder : IVisionEncoder  (csharp)
 - 🟡 SmokeTests  (csharp)

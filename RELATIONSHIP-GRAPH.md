@@ -1,6 +1,6 @@
 # RELATIONSHIP-GRAPH.md — ECAssistantInference
 
-Generated: 2026-09-25T20:39:46.191062+00:00
+Generated: 2026-09-26T10:50:02.362090+00:00
 Edges: 10  |  Packages: 2
 
 ---
