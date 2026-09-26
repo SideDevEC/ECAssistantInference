@@ -1356,10 +1356,10 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
 
     int n_vocab = llama_vocab_n_tokens(vocab);
 
-    // Per-call SELECTION chain — grammar is NOT in it. The grammar lives in the
-    // persistent chain and is applied FIRST on the full vocab (masking invalid
-    // tokens to -inf) before temperature/truncation, mirroring llama.cpp's
-    // common sampler chain order (grammar first, like llama-server).
+    // Per-call SELECTION chain — grammar is NOT in it. The grammar lives in
+    // the PERSISTENT chain (state advances via accept()) and is applied via
+    // rejection sampling: validate the selected token first, mask the top-k
+    // set second, full-vocab grammar-first only as the last resort (below).
     llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
     // Penalties (repeat + present)
@@ -1388,31 +1388,94 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
 
     const float* logits = logits_raw;
 
-    // Draw loop: rebuild candidate array from raw logits each attempt so the
-    // ignore_eos re-draw starts from unmodified logits (sampler apply mutates
-    // the token data array, not the context logits buffer).
+    // Advance grammar state with the committed token. Skip EOG/control tokens
+    // (chat-template control tokens would desync the parse state). Applying the
+    // grammar (llama_sampler_apply) is stateless — only accept() advances the
+    // automaton — so the single-token and tier-2 checks below cannot corrupt it.
+    auto grammar_accept = [&](llama_token t) {
+        if (grammar && t >= 0 &&
+            !llama_vocab_is_eog(vocab, t) && !llama_vocab_is_control(vocab, t)) {
+            llama_sampler_accept(grammar_state->chain, t);
+        }
+    };
+
+    // ── Grammar: rejection sampling (2026-09-26) ─────────────────────────────
+    // llama-server / LLamaSharp semantics. The grammar-first full-vocab mask
+    // costs ~130ms/token on a 152k vocab (token_to_piece + decode_utf8 with a
+    // heap alloc PER candidate). Instead:
+    //   Tier 1: run the selection chain WITHOUT grammar, validate the chosen
+    //           token with a 1-element grammar check — O(1), passes ~always for
+    //           loose grammars.
+    //   Tier 2: grammar-mask the already top_k-truncated candidate array (sorted
+    //           desc, size <= top_k) and take the highest-logit survivor — O(k).
+    //   Tier 3: full grammar-first mask over the whole vocab (the old path) —
+    //           only when the top-k set contains no grammar-valid token.
+    // "Output always conforms" holds: every returned token passed a grammar
+    // check (tier-1 validation, tier-2 mask, or tier-3 full mask).
+    if (grammar) {
+        llama_token token = -1;
+        // Selection WITHOUT grammar + ignore_eos redraw loop.
+        llama_token_data_array kept = {};
+        for (int attempt = 0; attempt < 16; attempt++) {
+            llama_token_data_array arr;
+            llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
+            for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
+            llama_sampler_apply(smpl, &arr);
+            token = arr.data[arr.selected].id;
+            // Keep the applied array: sorted desc, size <= top_k (top_k impl
+            // truncates). Needed for tier 2.
+            kept = arr;
+            if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
+        }
+
+        // Tier 1: single-token grammar validation — the common fast path.
+        llama_token_data single = { token, 1.0f, 0.0f };
+        llama_token_data_array single_arr = { &single, 1, -1, false };
+        llama_sampler_apply(grammar_state->chain, &single_arr);
+        if (single.logit != -INFINITY) {
+            llama_sampler_free(smpl);
+            grammar_accept(token);
+            return token;
+        }
+
+        // Tier 2: mask the truncated top-k candidates, take best survivor.
+        if (params->top_k > 0 && kept.size > 0 && kept.data) {
+            llama_sampler_apply(grammar_state->chain, &kept);
+            for (size_t i = 0; i < kept.size; i++) {
+                llama_token t = kept.data[i].id;
+                if (kept.data[i].logit == -INFINITY) continue;
+                // ignore_eos: never return EOG through the fallback tiers.
+                if (params->ignore_eos && llama_vocab_is_eog(vocab, t)) continue;
+                llama_sampler_free(smpl);
+                grammar_accept(t);
+                return t;
+            }
+        }
+
+        // Tier 3: full grammar-first mask (strict grammars, e.g. JSON schemas).
+        for (int attempt = 0; attempt < 16; attempt++) {
+            llama_token_data_array arr;
+            llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
+            for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
+            llama_sampler_apply(grammar_state->chain, &arr);
+            llama_sampler_apply(smpl, &arr);
+            token = arr.data[arr.selected].id;
+            if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
+        }
+        llama_sampler_free(smpl);
+        grammar_accept(token);
+        return token;
+    }
+
+    // ── No grammar: plain selection chain ──
     llama_token token = -1;
     for (int attempt = 0; attempt < 16; attempt++) {
-        // Thread-local scratch: ids rewritten each attempt, logits re-read from
-        // the raw snapshot so re-draws (ignore_eos) start unmodified.
         llama_token_data_array arr;
         llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
         for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
-
-        // Grammar masks FIRST (persistent chain — state advances via accept())
-        if (grammar) llama_sampler_apply(grammar_state->chain, &arr);
         llama_sampler_apply(smpl, &arr);
         token = arr.data[arr.selected].id;
-
-        // ignore_eos: re-draw WITHOUT accepting EOG into the grammar — feeding
-        // end/control tokens into a JSON grammar kills all parse stacks.
         if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
-    }
-
-    // Advance grammar state with the committed token. Skip EOG/control tokens
-    // (chat-template control tokens would desync the parse state).
-    if (grammar && !llama_vocab_is_eog(vocab, token) && !llama_vocab_is_control(vocab, token)) {
-        llama_sampler_accept(grammar_state->chain, token);
     }
 
     llama_sampler_free(smpl);
