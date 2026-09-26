@@ -344,7 +344,19 @@ eci_result_t eci_executor_create(eci_context_t* ctx, eci_executor_t** out_exec) 
     return ECI_OK;
 }
 
-void eci_executor_free(eci_executor_t* exec) { delete exec; }
+void eci_executor_free(eci_executor_t* exec) {
+    if (!exec) return;
+    // Leave seq 0 KV clean: executors always use seq 0, and the next consumer on
+    // this context (fresh executor or pooled conversation on seq 0) assumes its
+    // sequence starts empty. Stale cells cause position conflicts that ABORT
+    // the next llama_decode ("failed to initialize batch", rc=-1). Mirrors the
+    // cleanup eci_pool_return does for pooled conversations.
+    {
+        std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
+        llama_memory_seq_rm(exec->ctx_ref->mem, 0, 0, -1);
+    }
+    delete exec;
+}
 
 eci_result_t eci_executor_prompt(eci_executor_t* exec, const char* text) {
     if (!exec || !text) return ECI_ERR_INVALID_ARG;
