@@ -114,6 +114,19 @@ The caller drives all config (KV type, batch size, FA, gpu_layers). The safety l
 2. **Progressive fallback** — if probe fails: gpu_layers N → N/2 → N/4 → 0 (CPU)
 3. **Vulkan stale-KV flush** — after pool return, flush stale cells (#26744)
 
+## History Note
+
+Commit `07ce77a` is a short-lived intermediate state: it added a `fused_gdn` context param
+that depended on a local llama.cpp submodule patch (never pushed — the submodule points at
+pristine upstream `ggml-org/llama.cpp`). **That commit does not build standalone.** The very next
+commit (`1b4b67a`) reverted it entirely; `main` is the consistent state. Do not check out or
+build from `07ce77a`.
+
+Owner decision (2026-09-26): the llama.cpp submodule stays **pristine upstream** — no fork, no
+local diff. Behavior is pinned by upstream defaults (fused gated-delta-net kernels are hardcoded
+`true`). No environment variables influence behavior anywhere in product code; behavioral knobs
+are config-injected only.
+
 ## License
 
 MIT
