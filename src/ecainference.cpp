@@ -1600,8 +1600,22 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
         llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
         for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
         llama_sampler_apply(smpl, &arr);
-        token = arr.data[arr.selected].id;
+        // OOB GUARD (2026-09-26): dist sets selected=-1 when the array arrives
+        // EMPTY — reading data[-1] was undefined behavior. Map it to a clean
+        // failure so the diagnostic below fires deterministically.
+        token = (arr.selected >= 0 && (size_t)arr.selected < arr.size)
+            ? arr.data[arr.selected].id : (llama_token)-1;
         if (!params->ignore_eos || !llama_vocab_is_eog(vocab, token)) break;
+    }
+
+    // DIAG (2026-09-26): concurrent streams were failing here with token<0 —
+    // capture the exact chain state at the moment of failure.
+    if (token < 0) {
+        fprintf(stderr, "[sample-fail] plain chain returned token<0: n_vocab=%d temp=%.3f top_k=%d top_p=%.3f "
+                "min_p=%.3f rep_pen=%.3f rep_last_n=%d pen=%d recent=%zu logits_ptr=%p\n",
+                n_vocab, params->temperature, params->top_k, params->top_p, params->min_p,
+                params->repeat_penalty, params->repeat_last_n, t_pooled.pen ? 1 : 0,
+                recent_tokens.size(), (const void*)logits_raw);
     }
 
     return token;
