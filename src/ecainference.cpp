@@ -242,14 +242,23 @@ static bool g_rng_seeded = false;
 // Forward declarations (defined in the Grammar section below)
 struct eci_grammar_state_s;
 static void reset_grammar_state(eci_grammar_state_s* gs);
-static int32_t do_sample(llama_context* ctx, const llama_vocab* vocab,
-                         const eci_sampling_params_t* params,
-                         const std::vector<llama_token>& recent_tokens,
-                         int last_batch_idx) {
-    if (!g_rng_seeded) { srand((unsigned)time(nullptr)); g_rng_seeded = true; }
-    if (last_batch_idx < 0) return -1;
+// Snapshot a decoded logits row into `dest`. MUST be called immediately after
+// the llama_decode that produced `row` — the row is only addressable while
+// that batch is the context's CURRENT batch state. Any later decode on the
+// shared context (another slice of a chunked batch, another conversation's
+// cycle) replaces it, and llama_get_logits_ith() on the stale row
+// GGML_ABORTs the process (get_logits_ith: "batch.logits[i] != true").
+static void snapshot_logits_row(llama_context* lctx, std::vector<float>& dest, int row) {
+    const float* logits = llama_get_logits_ith(lctx, row);
+    if (!logits) { dest.clear(); return; }
+    const int n_vocab = llama_vocab_n_tokens(llama_model_get_vocab(llama_get_model(lctx)));
+    dest.assign(logits, logits + n_vocab);
+}
 
-    float* logits = llama_get_logits_ith(ctx, last_batch_idx);
+static int32_t do_sample(const float* logits, const llama_vocab* vocab,
+                         const eci_sampling_params_t* params,
+                         const std::vector<llama_token>& recent_tokens) {
+    if (!g_rng_seeded) { srand((unsigned)time(nullptr)); g_rng_seeded = true; }
     if (!logits) return -1;
 
     int n_vocab = llama_vocab_n_tokens(vocab);
@@ -414,8 +423,12 @@ eci_decode_result_t eci_executor_infer(eci_executor_t* exec) {
                                    exec->pending_tokens.begin() + decoded + slice);
         exec->n_tokens += slice;
         exec->n_kv_pos += slice;
-        if (last_slice)
+        if (last_slice) {
             exec->last_batch_idx = slice - 1;  // index into THIS slice's logits
+            // Snapshot NOW — the row is only valid until the next decode on
+            // this shared context (any later slice/cycle invalidates it).
+            snapshot_logits_row(exec->ctx_ref->ctx, exec->last_logits, slice - 1);
+        }
         decoded += slice;
     }
 
@@ -430,8 +443,9 @@ eci_result_t eci_executor_sample(eci_executor_t* exec,
     if (!exec || !out_token) return ECI_ERR_INVALID_ARG;
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
 
-    int32_t token = do_sample(exec->ctx_ref->ctx, exec->ctx_ref->vocab, params,
-                              exec->recent_tokens, exec->last_batch_idx);
+    if (exec->last_logits.empty()) return ECI_ERR_DECODE_FAILED;
+    int32_t token = do_sample(exec->last_logits.data(), exec->ctx_ref->vocab, params,
+                              exec->recent_tokens);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
 
     // Track for repeat penalty
@@ -452,7 +466,9 @@ eci_result_t eci_executor_rewind(eci_executor_t* exec, int n_tokens) {
     llama_memory_seq_rm(exec->ctx_ref->mem, 0, start, -1);
     exec->n_tokens -= n_tokens;
     exec->n_kv_pos -= n_tokens;
-    if (exec->last_batch_idx >= exec->n_tokens) exec->last_batch_idx = -1;
+    // Rewound tokens include the sampled row's token — snapshot is stale.
+    exec->last_batch_idx = -1;
+    exec->last_logits.clear();
     if ((int)exec->recent_tokens.size() > n_tokens)
         exec->recent_tokens.resize(exec->recent_tokens.size() - n_tokens);
     else
@@ -471,6 +487,7 @@ eci_result_t eci_executor_reset(eci_executor_t* exec) {
     exec->pending_tokens.clear();
     exec->recent_tokens.clear();
     exec->last_batch_idx = -1;
+    exec->last_logits.clear();
     return ECI_OK;
 }
 
@@ -505,11 +522,14 @@ eci_result_t eci_state_restore(eci_executor_t* exec, eci_state_t* state) {
         // Can't restore from backup seq — no spare seq_id
         exec->n_tokens = 0;
         exec->last_batch_idx = -1;
+        exec->last_logits.clear();
         return ECI_OK;
     }
     exec->n_tokens = state->n_tokens;
     exec->n_kv_pos = state->n_tokens;
-    if (exec->last_batch_idx >= exec->n_tokens) exec->last_batch_idx = -1;
+    // Restored KV may not include the sampled row's token — snapshot is stale.
+    exec->last_batch_idx = -1;
+    exec->last_logits.clear();
     return ECI_OK;
 }
 
@@ -568,6 +588,7 @@ eci_result_t eci_pool_return(eci_pool_t* pool, eci_conversation_t* conv) {
     conv->has_pending_prompt = false;
     conv->pending_tokens.clear();
     conv->last_batch_idx = -1;
+    conv->last_logits.clear();
     pool->available.push(conv);
     return ECI_OK;
 }
@@ -604,11 +625,17 @@ eci_result_t eci_conversation_sample(eci_conversation_t* conv,
                                      const eci_sampling_params_t* params,
                                      int32_t* out_token) {
     if (!conv || !out_token) return ECI_ERR_INVALID_ARG;
-    if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_INVALID_ARG;
+    // Sample from the PRIVATE logits snapshot (taken at decode time). Reading
+    // llama_get_logits_ith(last_batch_idx) directly here would check against
+    // the context's CURRENT batch — under batched continuous inference any
+    // interleaved decode (other conversations' slices/cycles) invalidates
+    // recorded rows and GGML_ABORTs the process.
+    if (conv->n_tokens == 0 || conv->last_logits.empty()) return ECI_ERR_INVALID_ARG;
     // Repeat/present penalties now apply in batch mode via conv->recent_tokens
     // (mirrors the executor path).
-    int32_t token = do_sample(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                              params, conv->recent_tokens, conv->last_batch_idx);
+    int32_t token = do_sample(conv->last_logits.data(),
+                              llama_model_get_vocab(llama_get_model(conv->ctx)),
+                              params, conv->recent_tokens);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     conv->recent_tokens.push_back(token);
     *out_token = token;
@@ -629,7 +656,9 @@ eci_result_t eci_conversation_rewind(eci_conversation_t* conv, int n_tokens) {
     int start = conv->n_tokens - n_tokens;
     llama_memory_seq_rm(conv->mem, conv->seq_id, start, -1);
     conv->n_tokens -= n_tokens; conv->n_kv_pos -= n_tokens;
-    if (conv->last_batch_idx >= conv->n_tokens) conv->last_batch_idx = -1;
+    // Rewound tokens include the sampled row's token — snapshot is stale.
+    conv->last_batch_idx = -1;
+    conv->last_logits.clear();
     return ECI_OK;
 }
 
@@ -642,6 +671,7 @@ eci_result_t eci_conversation_reset(eci_conversation_t* conv) {
     conv->has_pending_prompt = false;
     conv->pending_tokens.clear();
     conv->last_batch_idx = -1;
+    conv->last_logits.clear();
     return ECI_OK;
 }
 
@@ -663,7 +693,9 @@ eci_result_t eci_conversation_restore(eci_pool_t* pool, eci_conversation_t* conv
     if (to_rewind > 0) {
         llama_memory_seq_rm(conv->mem, conv->seq_id, state->n_tokens, -1);
         conv->n_tokens = state->n_tokens; conv->n_kv_pos = state->n_tokens;
-        if (conv->last_batch_idx >= conv->n_tokens) conv->last_batch_idx = -1;
+        // Rewound tokens include the sampled row's token — snapshot is stale.
+        conv->last_batch_idx = -1;
+        conv->last_logits.clear();
     }
     (void)pool;
     return ECI_OK;
@@ -763,8 +795,15 @@ eci_decode_result_t eci_infer(eci_context_t* ctx) {
                                           cp.tokens.begin() + (s - conv_start),
                                           cp.tokens.begin() + (s - conv_start) + covered);
             cp.committed += covered;
-            if (e == conv_end)
+            if (e == conv_end) {
                 cp.conv->last_batch_idx = conv_end - 1 - gi;  // logits index within THIS slice
+                // Snapshot the logits row NOW — it is only addressable while
+                // THIS slice's batch is the ctx's current batch. Conversations
+                // ending in EARLIER slices of a chunked batch (or sampled after
+                // a later infer cycle) would otherwise read a stale row and
+                // GGML_ABORT (get_logits_ith: "batch.logits[i] != true").
+                snapshot_logits_row(ctx->ctx, cp.conv->last_logits, cp.conv->last_batch_idx);
+            }
         }
         gi = end;
     }
@@ -1087,6 +1126,9 @@ eci_result_t eci_conversation_prompt_with_images(eci_conversation_t* conv,
                 // Image chunk token positions are embeddings — no token ids exist,
                 // so they cannot contribute to repeat-penalty history.
                 conv->last_batch_idx = n_tokens - 1;
+                // Snapshot now — the row is only valid until the next decode
+                // on this shared context.
+                snapshot_logits_row(conv->ctx, conv->last_logits, n_tokens - 1);
             }
         }
     }
@@ -1166,7 +1208,7 @@ eci_result_t eci_conversation_shift_left(eci_conversation_t* conv, int n_tokens)
     else
         conv->recent_tokens.clear();
 
-    if (conv->last_batch_idx >= conv->n_tokens) conv->last_batch_idx = -1;
+    if (conv->last_batch_idx >= conv->n_tokens) { conv->last_batch_idx = -1; conv->last_logits.clear(); }
     return ECI_OK;
 }
 
@@ -1180,7 +1222,7 @@ eci_result_t eci_executor_shift_left(eci_executor_t* exec, int n_tokens) {
     llama_memory_seq_rm(exec->ctx_ref->mem, 0, 0, n_tokens);
     exec->n_tokens -= n_tokens;  // logical count shrinks
     // n_kv_pos stays the same — KV positions are absolute, not relative
-    if (exec->last_batch_idx >= exec->n_tokens) exec->last_batch_idx = -1;
+    if (exec->last_batch_idx >= exec->n_tokens) { exec->last_batch_idx = -1; exec->last_logits.clear(); }
 
     // Trim recent tokens for repeat penalty
     if ((int)exec->recent_tokens.size() > n_tokens)
@@ -1309,13 +1351,12 @@ static bool ensure_grammar_chain(eci_grammar_state_s* gs, eci_grammar_t* grammar
     return true;
 }
 
-static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* vocab,
+static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab* vocab,
                                        const eci_sampling_params_t* params,
                                        const std::vector<llama_token>& recent_tokens,
-                                       int last_batch_idx,
                                        eci_grammar_t* grammar,
                                        eci_grammar_state_s* grammar_state) {
-    if (!params || last_batch_idx < 0) return -1;
+    if (!params || !logits_raw) return -1;
     if (grammar && !ensure_grammar_chain(grammar_state, grammar)) return -1;
 
     int n_vocab = llama_vocab_n_tokens(vocab);
@@ -1350,8 +1391,7 @@ static int32_t do_sample_with_grammar(llama_context* ctx, const llama_vocab* voc
         llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)rand()));
     }
 
-    float* logits = llama_get_logits_ith(ctx, last_batch_idx);
-    if (!logits) { llama_sampler_free(smpl); return -1; }
+    const float* logits = logits_raw;
 
     // Draw loop: rebuild candidate array from raw logits each attempt so the
     // ignore_eos re-draw starts from unmodified logits (sampler apply mutates
@@ -1389,8 +1429,9 @@ eci_result_t eci_executor_sample_grammar(eci_executor_t* exec, const eci_samplin
     if (exec->n_tokens == 0 || exec->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
 
     std::lock_guard<std::mutex> lock(exec->ctx_ref->infer_mtx);
-    int32_t token = do_sample_with_grammar(exec->ctx_ref->ctx, exec->ctx_ref->vocab,
-                                            params, exec->recent_tokens, exec->last_batch_idx, grammar,
+    if (exec->last_logits.empty()) return ECI_ERR_DECODE_FAILED;
+    int32_t token = do_sample_with_grammar(exec->last_logits.data(), exec->ctx_ref->vocab,
+                                            params, exec->recent_tokens, grammar,
                                             &exec->grammar_state);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     *out_token = token;
@@ -1416,10 +1457,11 @@ eci_result_t eci_executor_grammar_reset(eci_executor_t* exec) {
 eci_result_t eci_conversation_sample_grammar(eci_conversation_t* conv, const eci_sampling_params_t* params,
                                                 eci_grammar_t* grammar, int* out_token) {
     if (!conv || !params || !out_token) return ECI_ERR_INVALID_ARG;
-    if (conv->n_tokens == 0 || conv->last_batch_idx < 0) return ECI_ERR_DECODE_FAILED;
+    if (conv->n_tokens == 0 || conv->last_logits.empty()) return ECI_ERR_DECODE_FAILED;
 
-    int32_t token = do_sample_with_grammar(conv->ctx, llama_model_get_vocab(llama_get_model(conv->ctx)),
-                                            params, conv->recent_tokens, conv->last_batch_idx, grammar,
+    int32_t token = do_sample_with_grammar(conv->last_logits.data(),
+                                            llama_model_get_vocab(llama_get_model(conv->ctx)),
+                                            params, conv->recent_tokens, grammar,
                                             &conv->grammar_state);
     if (token < 0) return ECI_ERR_DECODE_FAILED;
     conv->recent_tokens.push_back(token);

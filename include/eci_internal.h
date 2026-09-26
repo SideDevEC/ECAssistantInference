@@ -95,6 +95,15 @@ struct eci_conversation_s {
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
 
+    // Snapshot of the last committed token's logits row, copied at decode
+    // time. llama_get_logits_ith() rows are only addressable while their
+    // batch is the shared context's CURRENT batch — any later decode on the
+    // same ctx (another conversation's slice or cycle in batched inference)
+    // replaces it, and sampling a stale row GGML_ABORTs the process
+    // (get_logits_ith: "batch.logits[i] != true"). Sampling reads this
+    // private copy, immune to interleaved decodes.
+    std::vector<float> last_logits;
+
     // Rolling window of committed tokens for repeat/present penalties
     // (mirrors eci_executor_s.recent_tokens)
     std::vector<llama_token> recent_tokens;
@@ -118,6 +127,10 @@ struct eci_executor_s {
     bool has_pending = false;
     std::vector<llama_token> pending_tokens;
     int last_batch_idx = -1;
+    // Private logits-row snapshot — same rationale as
+    // eci_conversation_s::last_logits (sampling must never read a batch row
+    // that a later decode on the shared ctx may have invalidated).
+    std::vector<float> last_logits;
     std::vector<llama_token> recent_tokens;
     eci_grammar_state_s grammar_state;
 };

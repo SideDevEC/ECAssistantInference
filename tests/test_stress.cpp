@@ -666,7 +666,67 @@ static void test_batched_large_prompt_small_nbatch() {
 }
 
 // ====================================================
-// 8. Repeated generation (resource leak detection)
+// 8b. Multi-conversation chunked batch sampling (stale logits row crash)
+// ====================================================
+// Reproduces the J7b batch-server crash (2026-09-26): combined pending tokens
+// of several conversations exceed n_batch, so eci_infer decodes in slices and
+// conversations' final tokens land in DIFFERENT slices. Sampling a
+// conversation whose row is not in the context's current batch used to
+// GGML_ABORT the process (get_logits_ith: "batch.logits[i] != true").
+// Snapshotted per-conversation logits make all samples valid — including
+// AFTER an interleaved decode for a different conversation.
+static void test_batched_multi_conv_chunked_sample() {
+    eci_model_t* m = make_model();
+    eci_context_t* ctx = make_ctx(m, 4096, 64, 4);  // n_batch=64 forces many slices
+    eci_pool_t* pool = nullptr;
+    ASSERT_EQ(eci_pool_create(ctx, &pool), ECI_OK);
+
+    eci_conversation_t* convs[3] = {};
+    for (int i = 0; i < 3; i++) {
+        ASSERT_EQ(eci_pool_lease(pool, &convs[i]), ECI_OK);
+        std::string prompt;
+        for (int j = 0; j < 30; j++)
+            prompt += "Conversation " + std::to_string(i) + " filler line number " + std::to_string(j) + ". ";
+        ASSERT_EQ(eci_conversation_prompt(convs[i], prompt.c_str()), ECI_OK);
+    }
+
+    // One cycle decodes all three (~250 tokens each) in 64-token slices.
+    // Conv 0 and conv 1 end in NON-final slices.
+    ASSERT_EQ(eci_infer(ctx), ECI_DECODE_OK);
+    for (int i = 0; i < 3; i++)
+        ASSERT(eci_conversation_token_count(convs[i]) > 64);
+
+    eci_sampling_params_t sp = {};
+    sp.temperature = 0.3f; sp.top_p = 0.95f; sp.top_k = 40; sp.max_tokens = 16;
+
+    // Sample ALL conversations — convs ending in earlier slices abort on the
+    // old code (stale row), pass with the per-conversation snapshot.
+    int32_t toks[3] = {-1, -1, -1};
+    for (int i = 0; i < 3; i++) {
+        ASSERT_EQ(eci_conversation_sample(convs[i], &sp, &toks[i]), ECI_OK);
+        ASSERT(toks[i] >= 0);
+    }
+
+    // Interleaved decode: continue conv 0 only, then sample conv 1 — its
+    // snapshot from the FIRST cycle must still be valid after this decode.
+    ASSERT_EQ(eci_conversation_prompt_tokens(convs[0], &toks[0], 1), ECI_OK);
+    ASSERT_EQ(eci_infer(ctx), ECI_DECODE_OK);
+    int32_t tok1 = -1;
+    ASSERT_EQ(eci_conversation_sample(convs[1], &sp, &tok1), ECI_OK);
+    ASSERT(tok1 >= 0);
+    // Conv 0's own snapshot was refreshed by its latest decode.
+    int32_t tok0 = -1;
+    ASSERT_EQ(eci_conversation_sample(convs[0], &sp, &tok0), ECI_OK);
+    ASSERT(tok0 >= 0);
+
+    for (int i = 0; i < 3; i++) ASSERT_EQ(eci_pool_return(pool, convs[i]), ECI_OK);
+    eci_pool_free(pool);
+    eci_free_context(ctx);
+    eci_free_model(m);
+}
+
+// ====================================================
+// 9. Repeated generation (resource leak detection)
 // ====================================================
 
 static void test_repeated_generation() {
@@ -961,6 +1021,7 @@ int main() {
     TEST(batched_infer_no_work);
     TEST(batched_partial_prompt);
     TEST(batched_large_prompt_small_nbatch);
+    TEST(batched_multi_conv_chunked_sample);
     TEST(repeated_generation);
     TEST(repeated_pool_cycles);
     TEST(backend_probe);
