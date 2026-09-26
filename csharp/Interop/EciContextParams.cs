@@ -10,15 +10,12 @@ internal readonly struct EciContextParams
     public readonly uint BatchSize;
     public readonly uint SeqMax;
     public readonly EciPoolingType PoolingType;
-    public readonly bool FusedGdn;
 
-    public EciContextParams(uint contextSize, uint batchSize, uint seqMax, EciPoolingType poolingType,
-        bool fusedGdn)
+    public EciContextParams(uint contextSize, uint batchSize, uint seqMax, EciPoolingType poolingType)
     {
         ContextSize = contextSize;
         BatchSize = batchSize;
         SeqMax = seqMax;
         PoolingType = poolingType;
-        FusedGdn = fusedGdn;
     }
 }

@@ -1,12 +1,12 @@
 # PACKAGE-MAP.md — ECAssistantInference
 
-Generated: 2026-09-26T17:47:24.439949+00:00
+Generated: 2026-09-26T17:55:37.636426+00:00
 
 ---
 
 | Package | Types | LOC | ~Tokens | Dependencies |
 |---|---|---|---|---|
-| csharp | 23 | 1854 | ~1570 | — |
+| csharp | 23 | 1850 | ~1570 | — |
 | Tests | 1 | 628 | ~61 | — |
 
 ---

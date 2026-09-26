@@ -140,10 +140,6 @@ eci_result_t eci_create_context(eci_model_t* model,
         default:           cp.pooling_type = LLAMA_POOLING_TYPE_NONE; break;
     }
 
-    // Fused gated-delta-net kernels (config-injected, default true — replaces
-    // the former ECI_DISABLE_GDN env var; behavior is pinned and injected).
-    cp.fused_gdn = params->fused_gdn;
-
     c->ctx = llama_new_context_with_model(model->model, cp);
     if (!c->ctx) { c->last_error = "Failed to create context"; delete c; return ECI_ERR_LOAD_FAILED; }
 

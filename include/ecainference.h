@@ -61,10 +61,6 @@ typedef struct {
     uint32_t batch_size;     /* n_batch */
     uint32_t seq_max;        /* max sequences (batch mode) */
     eci_pooling_type_t pooling_type;  /* for embedding models */
-    bool fused_gdn;          /* llama.cpp fused gated-delta-net kernels
-                               (config-injected; replaces the former
-                               ECI_DISABLE_GDN env var — behavior pinned,
-                               never environment-dependent) */
 } eci_context_params_t;
 
 /* ── Sampling params (full pipeline) ── */
