@@ -11,6 +11,8 @@
 #include <cstring>
 #include <cstdarg>
 #include <cstdio>
+#include <random>
+#include <vector>
 
 // ── Logging globals (2026-09-25) — defined here so ECI_LOG macro works everywhere ──
 static eci_log_callback_t g_log_cb = nullptr;
@@ -242,6 +244,57 @@ static bool g_rng_seeded = false;
 // Forward declarations (defined in the Grammar section below)
 struct eci_grammar_state_s;
 static void reset_grammar_state(eci_grammar_state_s* gs);
+
+// ── Per-thread RNG (mt19937) ─────────────────────────────────────────────────
+// Replaces srand()/rand(): srand was global — under the batched server multiple
+// conversations sampling on different threads share one seed state, and rand()
+// is not thread-safe (data race) and has poor distribution for top-p sampling.
+// Each thread gets its own mt19937 seeded once from random_device.
+static thread_local std::mt19937 t_rng{std::random_device{}()};
+static thread_local bool t_rng_seeded = false;
+static void ensure_rng() {
+    if (!t_rng_seeded) { t_rng.seed(std::random_device{}()); t_rng_seeded = true; }
+}
+static float rng_unit01() {
+    ensure_rng();
+    return std::uniform_real_distribution<float>(0.0f, 1.0f)(t_rng);
+}
+
+// ── Thread-local candidate-array scratch ────────────────────────────────────
+// do_sample_with_grammar() previously allocated a fresh std::vector of 150k
+// llama_token_data entries per attempt (up to 16 re-draws with ignore_eos) —
+// that push_back loop + realloc was the dominant per-token sampling cost.
+// Reusing a thread-local buffer keeps the raw block across attempts and calls;
+// capacity grows once to n_vocab and is then reused. Token ids are rewritten
+// every attempt, so no stale state can leak into sampling.
+static llama_token_data* t_candidates(size_t n_vocab, llama_token_data_array& arr) {
+    thread_local std::vector<llama_token_data> buf;
+    if (buf.size() < n_vocab) buf.resize(n_vocab);
+    for (int i = 0; i < (int)n_vocab; i++) {
+        buf[i] = { (llama_token)i, 0.0f, 0.0f };
+    }
+    arr = { buf.data(), n_vocab, -1, false };
+    return buf.data();
+}
+
+// ── Sampling-params fingerprint (for future pooled-chain gating) ────────────
+// Any change in these params invalidates a persisted/pooled selection chain.
+// Dist is intentionally NOT fingerprinted (seed changes per call by design);
+// penalties are intentionally NOT fingerprinted (they are history-feeding and
+// force rebuilds anyway); grammar is conversation-owned (Tier-1, persistent).
+static uint64_t params_fingerprint(const eci_sampling_params_t* p) {
+    if (!p) return 0;
+    uint64_t h = 1469598103934665603ULL;
+    auto mix = [&h](uint64_t v) { h ^= v; h *= 1099511628211ULL; };
+    union { float f; uint32_t u; } tf;
+    tf.f = p->temperature;            mix(tf.u);
+    tf.f = p->top_p;                  mix(tf.u);
+    mix((uint32_t)p->top_k);
+    tf.f = p->min_p;                  mix(tf.u);
+    mix(p->ignore_eos ? 1u : 0u);
+    return h;
+}
+
 // Snapshot a decoded logits row into `dest`. MUST be called immediately after
 // the llama_decode that produced `row` — the row is only addressable while
 // that batch is the context's CURRENT batch state. Any later decode on the
@@ -329,7 +382,7 @@ static int32_t do_sample(const float* logits, const llama_vocab* vocab,
     for (auto& s : scored) s.first /= sum;
 
     // Sample
-    float r = (float)rand() / RAND_MAX;
+    float r = rng_unit01();
     float acc = 0;
     for (auto& s : scored) {
         acc += s.first;
@@ -1388,7 +1441,7 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
         if (params->min_p > 0.0f)
             llama_sampler_chain_add(smpl, llama_sampler_init_min_p(params->min_p, 1));
         // Distribution sampler for stochastic selection
-        llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)rand()));
+        llama_sampler_chain_add(smpl, llama_sampler_init_dist((uint32_t)t_rng()));
     }
 
     const float* logits = logits_raw;
@@ -1398,10 +1451,11 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
     // the token data array, not the context logits buffer).
     llama_token token = -1;
     for (int attempt = 0; attempt < 16; attempt++) {
-        std::vector<llama_token_data> cur;
-        cur.reserve(n_vocab);
-        for (int i = 0; i < n_vocab; i++) cur.push_back({i, logits[i], 0.0f});
-        llama_token_data_array arr = { cur.data(), (size_t)n_vocab, -1, false };
+        // Thread-local scratch: ids rewritten each attempt, logits re-read from
+        // the raw snapshot so re-draws (ignore_eos) start unmodified.
+        llama_token_data_array arr;
+        llama_token_data* cur = t_candidates((size_t)n_vocab, arr);
+        for (int i = 0; i < n_vocab; i++) cur[i].logit = logits[i];
 
         // Grammar masks FIRST (persistent chain — state advances via accept())
         if (grammar) llama_sampler_apply(grammar_state->chain, &arr);
