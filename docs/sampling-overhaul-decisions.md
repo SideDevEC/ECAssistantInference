@@ -22,3 +22,15 @@ If J7b micro-measurement shows chain init ≥ ~5% of sampling time → pooled ch
 
 **Status:** implemented in `src/ecainference.cpp` (see t_rng/t_candidates/params_fingerprint); commit pending.
 **Added:** 2026-09-26
+
+## Follow-up (2026-09-26 pm): no-grammar path unified
+- do_sample now delegates to do_sample_with_grammar(grammar=null) — one
+  sampling pipeline; hand-rolled 150k scored-vector sampler removed.
+- Accepted behavior deltas: llama-style penalties (negative logits multiplied,
+  presence per-unique-token), top_k->top_p->min_p order, ignore_eos now
+  honored on no-grammar calls, outputs not bit-identical to pre-change.
+- Measured (Qwen3.5-4B, Metal): sampling-overhead 8.6ms -> 4.1ms/sample;
+  generate-128 50.9 -> 67.7 t/s. Remaining gap vs LLamaSharp (91.7 t/s) is
+  decode-side, not sampling.
+- Next possible step (gated): pool the per-thread selection chain keyed by
+  params_fingerprint() — chain re-init is part of the residual ~4ms.

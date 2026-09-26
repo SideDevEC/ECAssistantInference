@@ -239,7 +239,6 @@ bool eci_token_is_eos(eci_context_t* ctx, int32_t token) {
 // Replaces: DefaultSamplingPipeline
 // Implements: temperature, top_k, top_p, min_p, repeat_penalty, presence penalty
 
-static bool g_rng_seeded = false;
 
 // Forward declarations (defined in the Grammar section below)
 struct eci_grammar_state_s;
@@ -308,87 +307,30 @@ static void snapshot_logits_row(llama_context* lctx, std::vector<float>& dest, i
     dest.assign(logits, logits + n_vocab);
 }
 
+static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab* vocab,
+                                      const eci_sampling_params_t* params,
+                                      const std::vector<llama_token>& recent_tokens,
+                                      eci_grammar_t* grammar,
+                                      eci_grammar_state_s* grammar_state);
+
 static int32_t do_sample(const float* logits, const llama_vocab* vocab,
                          const eci_sampling_params_t* params,
                          const std::vector<llama_token>& recent_tokens) {
-    if (!g_rng_seeded) { srand((unsigned)time(nullptr)); g_rng_seeded = true; }
+    // Single sampling pipeline (2026-09-26): no-grammar calls delegate to the
+    // same chain used by do_sample_with_grammar — thread-local candidate
+    // scratch, per-thread mt19937, llama-server chain semantics
+    // (temp -> top_k -> top_p -> min_p -> dist, llama-style penalties).
+    // Replaces the old hand-rolled sampler (~8.6ms/token measured).
     if (!logits) return -1;
-
-    int n_vocab = llama_vocab_n_tokens(vocab);
-    float temp = params ? params->temperature : 0.3f;
-    float top_p = params ? params->top_p : 0.95f;
-    int top_k = params ? params->top_k : 40;
-    float min_p = params ? params->min_p : 0.0f;
-    float rep_pen = params ? params->repeat_penalty : 1.1f;
-    int rep_last_n = params ? params->repeat_last_n : -1;
-    float pres_pen = params ? params->penalty_present : 0.0f;
-
-    // Copy logits — llama_get_logits_ith returns a pointer into llama's internal
-    // buffer. Modifying it in-place would corrupt state for other conversations.
-    std::vector<float> logits_copy(logits, logits + n_vocab);
-    float* l = logits_copy.data();
-
-    // Apply repeat penalty
-    if (rep_pen != 1.0f && !recent_tokens.empty()) {
-        int start = (rep_last_n < 0 || rep_last_n > (int)recent_tokens.size())
-                    ? 0 : (int)recent_tokens.size() - rep_last_n;
-        for (int i = start; i < (int)recent_tokens.size(); i++) {
-            llama_token t = recent_tokens[i];
-            if (t >= 0 && t < n_vocab) {
-                l[t] = l[t] / rep_pen + pres_pen;
-            }
-        }
-    }
-
-    // Apply temperature + collect candidates
-    std::vector<std::pair<float, int>> scored;
-    scored.reserve(n_vocab);
-    float inv_temp = 1.0f / std::max(temp, 1e-5f);
-    for (int i = 0; i < n_vocab; i++)
-        scored.push_back({l[i] * inv_temp, i});
-
-    // Top-k
-    if (top_k > 0 && top_k < (int)scored.size()) {
-        std::partial_sort(scored.begin(), scored.begin() + top_k, scored.end(),
-                         [](auto& a, auto& b) { return a.first > b.first; });
-        scored.resize(top_k);
-    }
-
-    std::sort(scored.begin(), scored.end(), [](auto& a, auto& b) { return a.first > b.first; });
-
-    // Min-p filtering
-    if (min_p > 0 && !scored.empty()) {
-        float max_logit = scored[0].first;
-        float threshold = max_logit + std::log(min_p);
-        scored.erase(std::remove_if(scored.begin(), scored.end(),
-                      [&](auto& s) { return s.first < threshold; }), scored.end());
-    }
-
-    // Softmax
-    float max_l = scored[0].first;
-    for (auto& s : scored) s.first = std::exp(s.first - max_l);
-    float sum = 0; for (auto& s : scored) sum += s.first;
-
-    // Top-p (nucleus)
-    float cumprob = 0; int cutoff = scored.size();
-    for (int i = 0; i < (int)scored.size(); i++) {
-        cumprob += scored[i].first / sum;
-        if (cumprob > top_p) { cutoff = i + 1; break; }
-    }
-    scored.resize(cutoff);
-
-    // Renormalize
-    sum = 0; for (auto& s : scored) sum += s.first;
-    for (auto& s : scored) s.first /= sum;
-
-    // Sample
-    float r = rng_unit01();
-    float acc = 0;
-    for (auto& s : scored) {
-        acc += s.first;
-        if (r <= acc) return s.second;
-    }
-    return scored.back().second;
+    static const eci_sampling_params_t kDefaultParams{
+        .temperature = 0.3f, .top_p = 0.95f, .top_k = 40, .min_p = 0.0f,
+        .repeat_penalty = 1.1f, .repeat_last_n = -1, .penalty_present = 0.0f,
+        .max_tokens = 0, .ignore_eos = false,
+    };
+    return do_sample_with_grammar(logits, vocab,
+                                  params ? params : &kDefaultParams,
+                                  recent_tokens, /*grammar=*/nullptr,
+                                  /*grammar_state=*/nullptr);
 }
 
 // ── Standard executor (non-batched) ──
