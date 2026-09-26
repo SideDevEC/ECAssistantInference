@@ -14,11 +14,33 @@
 #include <vector>
 #include <stack>
 #include <mutex>
+#include <condition_variable>
 #include <memory>
 #include <cstring>
 #include <cmath>
 #include <algorithm>
 #include <set>
+
+// ── Global destruction synchronization ──
+//
+// Metal (and potentially other backends) assert that all GPU resources
+// (buffers, residency sets) are freed before the device is freed.
+// eci_free_context frees llama_context (which owns Metal buffers), and
+// eci_free_model frees llama_model (which owns Metal devices). If these
+// run concurrently on different threads (e.g. .NET SafeHandle finalizers
+// during process exit), the device destructor asserts because buffers
+// haven't been freed yet.
+//
+// The destruction gate ensures:
+// 1. eci_free_context acquires the gate, frees the context, releases the gate
+// 2. eci_free_model acquires the gate, waits for all contexts to be freed,
+//    then frees the model
+// This is backend-agnostic — it protects ANY backend that requires
+// ordered teardown (Metal, CUDA, Vulkan all have this constraint).
+//
+// The context count is per-model: eci_free_model blocks until its
+// model's context count reaches zero. This preserves parallelism —
+// contexts from DIFFERENT models can be freed concurrently.
 
 struct eci_model_s {
     llama_model* model = nullptr;
@@ -29,11 +51,18 @@ struct eci_model_s {
     bool flash_attn = true;
     eci_kv_type_t kv_cache_type = ECI_KV_F16;
     int threads = -1;  // -1 = auto
+
+    // Destruction synchronization: track how many contexts are alive for this model.
+    // eci_free_model waits on this CV until the count hits zero.
+    int active_context_count = 0;
+    std::mutex destruction_mtx;
+    std::condition_variable destruction_cv;
 };
 
 struct eci_context_s {
     llama_context* ctx = nullptr;
-    llama_model* model = nullptr;
+    llama_model* model = nullptr;       // raw llama_model pointer (non-owning)
+    eci_model_t* owning_model = nullptr; // back-reference for destruction accounting
     const llama_vocab* vocab = nullptr;
     llama_memory_t mem = nullptr;
     uint32_t n_ctx = 0;

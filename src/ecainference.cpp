@@ -61,7 +61,25 @@ eci_result_t eci_load_model(const eci_model_params_t* params, eci_model_t** out_
 }
 
 void eci_free_model(eci_model_t* model) {
-    if (model) { if (model->model) llama_model_free(model->model); delete model; }
+    if (!model) return;
+
+    // Wait for all contexts created from this model to be freed first.
+    // Metal (and other GPU backends) assert that all buffers/residency sets
+    // are freed before the device is freed. If eci_free_model runs concurrently
+    // with eci_free_context (e.g. .NET SafeHandle finalizers during process
+    // exit), the device destructor aborts because contexts still hold buffers.
+    //
+    // We block here — NOT in eci_free_context — so context destruction stays
+    // parallel. Only model destruction serializes against context teardown.
+    {
+        std::unique_lock<std::mutex> lk(model->destruction_mtx);
+        model->destruction_cv.wait(lk, [model]() {
+            return model->active_context_count == 0;
+        });
+    }
+
+    if (model->model) llama_model_free(model->model);
+    delete model;
 }
 
 // ── Context ──
@@ -73,6 +91,7 @@ eci_result_t eci_create_context(eci_model_t* model,
 
     auto* c = new eci_context_s();
     c->model = model->model;
+    c->owning_model = model;  // back-reference for destruction accounting
     c->vocab = model->vocab;
     c->pool_type = params->pooling_type;
 
@@ -115,12 +134,35 @@ eci_result_t eci_create_context(eci_model_t* model,
     c->mem = llama_get_memory(c->ctx);
     c->n_ctx = params->context_size;
     c->n_seq_max = cp.n_seq_max;
+
+    // Register this context with the owning model for destruction ordering.
+    // eci_free_model will wait until active_context_count reaches zero
+    // before freeing the model (and its GPU device).
+    {
+        std::lock_guard<std::mutex> lk(model->destruction_mtx);
+        model->active_context_count++;
+    }
+
     *out_ctx = c;
     return ECI_OK;
 }
 
 void eci_free_context(eci_context_t* ctx) {
-    if (ctx) { if (ctx->ctx) llama_free(ctx->ctx); delete ctx; }
+    if (!ctx) return;
+
+    // Free the llama context first. llama_free releases all GPU buffers
+    // (Metal residency sets, CUDA allocations, etc.) owned by this context.
+    if (ctx->ctx) llama_free(ctx->ctx);
+
+    // Decrement the owning model's context count and notify any waiting
+    // eci_free_model call that one fewer context holds GPU resources.
+    if (ctx->owning_model) {
+        std::lock_guard<std::mutex> lk(ctx->owning_model->destruction_mtx);
+        ctx->owning_model->active_context_count--;
+        ctx->owning_model->destruction_cv.notify_all();
+    }
+
+    delete ctx;
 }
 
 uint32_t eci_context_size(eci_context_t* ctx) { return ctx ? ctx->n_ctx : 0; }

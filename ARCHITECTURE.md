@@ -2,6 +2,8 @@
 
 **Summary:** C/C++ inference engine linking llama.cpp directly, with C# P/Invoke bindings. Replaces LLamaSharp.
 
+**Addendum 2026-09-26 (destruction ordering — Metal rsets abort fix):** `eci_free_model` and `eci_free_context` ran without synchronization — .NET SafeHandle finalizers can fire concurrently during process exit, causing `llama_model_free` (which destroys Metal devices) to race with `llama_free` (which destroys Metal buffers/residency sets). The Metal backend asserts `GGML_ASSERT([rsets->data count] == 0)` in `ggml_metal_rsets_free` — if any context's buffers haven't been freed yet, the process aborts. **Fix:** per-model context counter + condition_variable. `eci_create_context` increments `model->active_context_count` under `model->destruction_mtx`. `eci_free_context` frees the llama_context, then decrements the count and notifies the CV. `eci_free_model` waits on the CV until `active_context_count == 0` before freeing the model. This is backend-agnostic (protects Metal, CUDA, Vulkan alike) and preserves full parallelism — contexts from different models can be freed concurrently, and context destruction doesn't serialize against anything except model destruction. C++ tests: stress 30/30, basic 14/14. C# tests: 51/51.
+
 **Addendum 2026-09-25 (chunked decode — n_batch safety):** `llama_decode` ABORTS the process (GGML_ASSERT `n_tokens_all <= n_batch`) when handed more tokens than one batch. LLamaSharp chunked transparently; this layer must do it itself. All three decode sites now chunk pending tokens into ≤ `n_batch` slices with positions advancing per slice: (1) `eci_executor_infer` (standard path) — logits only on the final token of the final slice; failed slices keep the REMAINING pending tokens so retry doesn't re-decode committed ones. (2) batched `eci_infer` — per-conversation coverage committed per slice (`committed` tracking; on failure the committed prefix is trimmed so positions don't diverge from KV). (3) `eci_conversation_prompt_with_images` text flush before image decode. New stress test: `batched_large_prompt_small_nbatch` (prompt ≫ n_batch, sample right after chunked prefill). C++ tests: stress 30/30, basic 14/14.
 
 ## Layers
@@ -55,7 +57,8 @@ Flat C API — 70+ functions. Opaque handles for model, context, pool, conversat
 - C# exposes `IStandardExecutor.PromptWithImages()`
 
 ### Thread safety
-- Internal `std::mutex` on every `llama_*` call (serialized)
+- Internal `std::mutex` on every `llama_*` call (serialized) — `eci_context_s::infer_mtx`
+- **Destruction ordering:** per-model `active_context_count` + condition_variable. `eci_free_model` blocks until all contexts created from that model are freed first. Prevents Metal `ggml_metal_rsets_free` abort when device is freed before its buffers. Backend-agnostic — protects any GPU backend that requires ordered teardown. Contexts from different models can be freed concurrently (no global lock).
 - C# layer adds `SemaphoreSlim` for higher-level coordination
 - Vision requires exclusive cycle-gate access (documented in CAPABILITY.md)
 
