@@ -325,8 +325,9 @@ static uint64_t params_fingerprint(const eci_sampling_params_t* p) {
 //      mismatch. Nothing shared across threads, nothing to leak.
 struct pooled_chain {
     llama_sampler* smpl = nullptr;
+    llama_sampler* pen = nullptr;   // penalties sampler inside the chain (null if penalties off)
     uint64_t fingerprint = 0;
-    ~pooled_chain() { if (smpl) llama_sampler_free(smpl); }
+    ~pooled_chain() { if (smpl) llama_sampler_free(smpl); pen = nullptr; }
 };
 static thread_local pooled_chain t_pooled;
 
@@ -338,13 +339,16 @@ static llama_sampler* pooled_selection_chain(const eci_sampling_params_t* params
     if (t_pooled.smpl && t_pooled.fingerprint == fp) return t_pooled.smpl;
 
     if (t_pooled.smpl) llama_sampler_free(t_pooled.smpl);
+    t_pooled.pen = nullptr;
     llama_sampler* smpl = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
     if (params->repeat_penalty != 1.0f || params->penalty_present > 0.0f) {
         int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
         if (pen_last_n > 0) {
-            llama_sampler_chain_add(smpl, llama_sampler_init_penalties(
-                n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present));
+            llama_sampler* pen = llama_sampler_init_penalties(
+                n_vocab, pen_last_n, params->repeat_penalty, 0.0f, params->penalty_present);
+            llama_sampler_chain_add(smpl, pen);
+            t_pooled.pen = pen;
         }
     }
     if (params->temperature <= 0) {
@@ -1445,6 +1449,22 @@ static int32_t do_sample_with_grammar(const float* logits_raw, const llama_vocab
     // is fetched/validated by fingerprint; NEVER freed per call (thread_local
     // ownership, freed at thread exit or fingerprint change).
     llama_sampler* smpl = pooled_selection_chain(params, recent_tokens, n_vocab);
+
+    // ── Penalties activation (2026-09-26, ARCHITECTURE pm7, owner-approved) ──
+    // Feed THIS caller's recent_tokens into the pooled penalties ring via
+    // targeted reset+replay. The ring is thread-local (pooled), so it MUST be
+    // rebuilt per call to stay conversation-correct under batched
+    // interleaving (reset+replay of the caller's window — no cross-contamination).
+    // CRITICAL: reset ONLY the penalties sampler, NEVER the chain — chain reset
+    // would reseed the dist RNG to its creation seed and corrupt the draw
+    // sequence. Penalties off (pen == nullptr) → zero work, zero change.
+    if (t_pooled.pen) {
+        llama_sampler_reset(t_pooled.pen);
+        int pen_last_n = params->repeat_last_n >= 0 ? params->repeat_last_n : (int)recent_tokens.size();
+        if (pen_last_n > (int)recent_tokens.size()) pen_last_n = (int)recent_tokens.size();
+        for (int i = (int)recent_tokens.size() - pen_last_n; i < (int)recent_tokens.size(); i++)
+            llama_sampler_accept(t_pooled.pen, recent_tokens[i]);
+    }
 
     const float* logits = logits_raw;
 
